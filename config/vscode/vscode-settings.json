@@ -1,6 +1,6 @@
 {
     "window.titleBarStyle": "custom",
-    "window.density.editorTabHeight": "compact",
+    "window.density.editorTabHeight": "default",
     "window.commandCenter": false,
 
     "workbench.settings.editor": "ui",
@@ -9,11 +9,11 @@
     "workbench.editor.enablePreviewFromCodeNavigation": true,
     "workbench.editor.enablePreviewFromQuickOpen": true,
     "workbench.iconTheme": "material-icon-theme",
-    "workbench.colorTheme": "SynthWave '84",
     "workbench.list.smoothScrolling": true,
     "workbench.settings.openDefaultSettings": true,
+    "workbench.panel.showLabels": false,
 
-    "editor.fontFamily": "Jetbrains Mono",
+    "editor.fontFamily": "JetBrainsMono Nerd Font",
     "editor.fontSize": 14,
     "editor.linkedEditing": true,
     "editor.fontLigatures": false,
@@ -22,11 +22,11 @@
     "editor.smoothScrolling": true,
     "editor.renderControlCharacters": true,
     "editor.formatOnSaveMode": "modifications",
-    "editor.wordWrap": "off",
+    "editor.wordWrap": "on",
     "editor.cursorBlinking": "smooth",
     "editor.detectIndentation": false,
     "editor.tabCompletion": "on",
-    "editor.fontWeight": "500",
+    "editor.fontWeight": "normal",
     "editor.minimap.showSlider": "always",
     "editor.minimap.size": "fill",
     "editor.minimap.renderCharacters": false,
@@ -34,7 +34,9 @@
 
     "terminal.integrated.fontSize": 14,
     "terminal.integrated.hideOnStartup": "always",
-    "terminal.integrated.smoothScrolling": true,
+    "terminal.integrated.smoothScrolling": false,
+    "terminal.integrated.stickyScroll.enabled": false,
+    "terminal.integrated.shellIntegration.decorationsEnabled": "overviewRuler",
 
     "files.autoSave": "afterDelay",
     "files.trimTrailingWhitespace": true,
@@ -60,7 +62,6 @@
     "python.analysis.inlayHints.variableTypes": true,
     "python.analysis.inlayHints.functionReturnTypes": true,
     "python.analysis.typeCheckingMode": "off",
-    "editor.minimap.enabled": false,
     "editor.accessibilitySupport": "off",
     "[typescript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
@@ -68,5 +69,14 @@
     "github.copilot.nextEditSuggestions.enabled": true,
     "[jsonc]": {
         "editor.defaultFormatter": "vscode.json-language-features"
-    }
+    },
+    "editor.minimap.enabled": false,
+    "sonarlint.focusOnNewCode": true,
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "[markdown]": {
+        "editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
+    },
+    "editor.stickyScroll.enabled": false,
 }
