@@ -1,0 +1,27 @@
+# Python
+.venv/
+__pycache__/
+
+# OS Files
+.DS_Store
+
+# Build Directories
+build/
+bin/
+obj/
+
+# Debug Files
+*.dSYM
+
+# Logs
+*.log
+
+# Temporary Files
+*.tmp
+
+# Backup Files
+*.bak
+
+# Editor Files
+.vscode/
+.idea/
