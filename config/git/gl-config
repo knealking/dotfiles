@@ -1,0 +1,4 @@
+[user]
+    name = knealking
+    email = 27192144-knealking@users.noreply.gitlab.com
+    signingkey = ~/.ssh/id_ed25519_gitlab.pub
