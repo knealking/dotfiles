@@ -1,6 +1,6 @@
 {
     "window.titleBarStyle": "custom",
-    "window.density.editorTabHeight": "default",
+    "window.density.editorTabHeight": "compact",
     "window.commandCenter": false,
 
     "workbench.settings.editor": "ui",
@@ -12,6 +12,7 @@
     "workbench.list.smoothScrolling": true,
     "workbench.settings.openDefaultSettings": true,
     "workbench.panel.showLabels": false,
+    "workbench.colorTheme": "Catppuccin Mocha",
 
     "editor.fontFamily": "JetBrainsMono Nerd Font",
     "editor.fontSize": 14,
@@ -30,7 +31,7 @@
     "editor.minimap.showSlider": "always",
     "editor.minimap.size": "fill",
     "editor.minimap.renderCharacters": false,
-    "breadcrumbs.enabled": false,
+    "editor.stickyScroll.enabled": false,
 
     "terminal.integrated.fontSize": 14,
     "terminal.integrated.hideOnStartup": "always",
@@ -50,8 +51,10 @@
     "[c]": {
         "editor.defaultFormatter": "ms-vscode.cpptools"
     },
+    "C_Cpp.inlayHints.parameterNames.enabled": true,
+    "C_Cpp.inlayHints.autoDeclarationTypes.enabled": true,
+    "C_Cpp.codeAnalysis.clangTidy.enabled": true,
 
-    "python.venvPath": "~/.venvs",
     "[python]": {
         "editor.defaultFormatter": "charliermarsh.ruff",
         "editor.formatOnSave": true,
@@ -71,12 +74,11 @@
         "editor.defaultFormatter": "vscode.json-language-features"
     },
     "editor.minimap.enabled": false,
-    "sonarlint.focusOnNewCode": true,
     "[json]": {
         "editor.defaultFormatter": "vscode.json-language-features"
     },
     "[markdown]": {
         "editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
     },
-    "editor.stickyScroll.enabled": false,
+    "excalidraw.theme": "dark",
 }
