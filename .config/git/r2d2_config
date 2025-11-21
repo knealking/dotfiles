@@ -1,0 +1,6 @@
+[user]
+	name = neal.king
+	email = 23962-neal.king@users.noreply.code.levelup.cce.af.mil
+
+[http]
+	sslVerify = false

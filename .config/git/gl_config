@@ -1,0 +1,7 @@
+[user]
+	name = knealking
+	email = 27192144-knealking@users.noreply.gitlab.com
+	signingkey = 64FE426AA686A3B8
+
+[commit]
+	gpgsign = true
