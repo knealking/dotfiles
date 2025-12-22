@@ -1,3 +1,5 @@
+export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
+
 # Path to your Oh My Zsh Config
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="eastwood"
@@ -14,9 +16,6 @@ else
   export EDITOR='nvim'
 fi
 
-# Homebrew
-eval "$(/opt/homebrew/bin/brew shellenv)"
-
 # GPG
 export GPG_TTY=$(tty)
 
@@ -27,9 +26,6 @@ source <(fzf --zsh)
 fpath=(/Users/nealking/.docker/completions $fpath)
 autoload -Uz compinit
 compinit
-
-# End of Docker CLI completions
-export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
 
 # Programs
 alias e="$EDITOR"
@@ -49,4 +45,4 @@ alias gcm='git commit -m'
 alias gp='git push'
 
 # fzf opens the selected file in nvim
-alias fnv='nvim $(fzf -m --preview="bat --color=always {}")'
+alias fnv='nvim $(fzf -m --preview="batcat --color=always {}")'

@@ -38,5 +38,3 @@
 	showStash = true
 	showUntrackedFiles = all  # show individual untracked files
 
-[credential]
-	helper = osxkeychain
