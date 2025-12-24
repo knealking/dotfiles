@@ -2,5 +2,9 @@
 	name = neal.king
 	email = 23962-neal.king@users.noreply.code.levelup.cce.af.mil
 
+[credential]
+	helper = libsecret
+
 [http]
 	sslVerify = false
+

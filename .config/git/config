@@ -2,10 +2,10 @@
 [user]
 	name = knealking
 	email = 50931322+knealking@users.noreply.github.com
-	signingkey = D9964D3F7BB2742B
+	signingkey = 82871C29344F4FA3
 
 [commit]
-    gpgsign = true
+	gpgsign = true
 
 # Include GitLab configuration for repos in ~/gitlab/
 [includeIf "gitdir:~/repos/gitlab/"]
