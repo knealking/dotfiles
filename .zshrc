@@ -1,3 +1,4 @@
+# nvim binary installed path
 export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
 
 # Path to your Oh My Zsh Config
@@ -21,21 +22,10 @@ fi
 export GPG_TTY=$(tty)
 
 # Set up fzf key bindings and fuzzy completion
-source <(fzf --zsh)
-
-# The following lines have been added by Docker Desktop to enable Docker CLI completions.
-fpath=(/Users/nealking/.docker/completions $fpath)
-autoload -Uz compinit
-compinit
+source <(fzf --zsh)  # -- zsh requires version 0.48.0 or higher
 
 # Programs
 alias e="$EDITOR"
-
-# custom aliases
-alias ls='ls -h'
-alias la='la -lh'
-alias v='vim'
-alias nv='nvim'
 
 # git aliases
 alias gc='git clone'
@@ -47,3 +37,10 @@ alias gp='git push'
 
 # fzf opens the selected file in nvim
 alias fnv='nvim $(fzf -m --preview="batcat --color=always {}")'
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/home/nealking/.lmstudio/bin"
+# End of LM Studio CLI section
+
+# lazygit binary installed path
+export PATH="$PATH:/opt/lazygit"
