@@ -9,3 +9,4 @@ opt.smoothscroll = false
 opt.conceallevel = 0
 opt.shiftwidth = 4 -- Size of an indent
 opt.tabstop = 4 -- Number of spaces tabs count for
+opt.colorcolumn = "80" -- Column length marker 80
