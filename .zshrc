@@ -3,20 +3,12 @@ export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
 
 # Path to your Oh My Zsh Config
 export ZSH="$HOME/.oh-my-zsh"
+ZSH_THEME="refined"
 plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
 source $ZSH/oh-my-zsh.sh
 
-eval "$(starship init zsh)"
-
 # Custom editor
 export EDITOR=nvim
-
-# Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='vim'
-else
-  export EDITOR='nvim'
-fi
 
 # GPG
 export GPG_TTY=$(tty)
@@ -36,7 +28,7 @@ alias gcm='git commit -m'
 alias gp='git push'
 
 # fzf opens the selected file in nvim
-alias fnv='nvim $(fzf -m --preview="batcat --color=always {}")'
+alias fnv='$(EDITOR) $(fzf -m --preview="batcat --color=always {}")'
 
 # Added by LM Studio CLI (lms)
 export PATH="$PATH:/home/nealking/.lmstudio/bin"
