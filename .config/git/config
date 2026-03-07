@@ -4,9 +4,6 @@
 	email = 50931322+knealking@users.noreply.github.com
 	signingkey = 82871C29344F4FA3
 
-[commit]
-	gpgsign = true
-
 # Include GitLab configuration for repos in ~/gitlab/
 [includeIf "gitdir:~/repos/gitlab/"]
 	path = ~/.config/git/gl_config
@@ -24,9 +21,6 @@
 
 [init]
 	defaultBranch = main
-
-[tag]
-	gpgSign = true
 
 [status]
 	branch = true

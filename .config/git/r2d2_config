@@ -5,3 +5,6 @@
 [http]
 	sslVerify = false
 
+[commit]
+	gpgsign = false
+
