@@ -5,6 +5,7 @@
 vim.g.snacks_animate = false
 
 local opt = vim.opt
+opt.colorcolumn = "80"
 opt.smoothscroll = false
 opt.conceallevel = 0
 opt.shiftwidth = 4 -- Size of an indent
