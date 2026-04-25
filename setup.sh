@@ -9,6 +9,9 @@ sudo apt install build-essential -y
 # Install git
 sudo apt install git -y
 
+# Install GNU Stow
+sudo apt install stow -y
+
 # Install libsecret
 sudo apt install build-essential libsecret-1-0 libsecret-1-dev libglib2.0-dev -y
 sudo make --directory=/usr/share/doc/git/contrib/credential/libsecret
@@ -25,14 +28,14 @@ curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/downl
 sudo mkdir -p /opt/lazygit
 sudo tar -C /opt/lazygit -xzf lazygit.tar.gz
 sudo rm lazygit.tar.gz
-echo 'export PATH="$PATH:/opt/lazygit"' >> ~/.zshrc
+echo 'export PATH="$PATH:/opt/lazygit"' >>~/.zshrc
 
 # Install Neovim
 curl -Lo nvim.tar.gz https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
 sudo rm -rf /opt/nvim
 sudo tar -C /opt -xzf nvim.tar.gz
 sudo rm nvim.tar.gz
-echo 'export PATH="$PATH:/opt/nvim/bin"' >> ~/.zshrc
+echo 'export PATH="$PATH:/opt/nvim/bin"' >>~/.zshrc
 
 # Install Oh My Zsh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
