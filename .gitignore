@@ -25,3 +25,4 @@ obj/
 # Editor Files
 .vscode/
 .idea/
+.copilot/ide
