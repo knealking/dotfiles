@@ -3,5 +3,7 @@
 .gemini
 .copilot
 .bashrc
-.bashrc_aliases
+.bash_aliases
 
+setup.sh
+README.md
