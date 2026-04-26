@@ -2,7 +2,6 @@
 [user]
 	name = knealking
 	email = 50931322+knealking@users.noreply.github.com
-	signingkey = 82871C29344F4FA3
 
 # Include GitLab configuration for repos in ~/gitlab/
 [includeIf "gitdir:~/repos/gitlab/"]
