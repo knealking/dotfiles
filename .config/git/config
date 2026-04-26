@@ -1,11 +1,7 @@
-# Include GitHub configuration for repos in ~/github/
+# Global git configuration
 [user]
 	name = knealking
 	email = 50931322+knealking@users.noreply.github.com
-	signingkey = D9964D3F7BB2742B
-
-[commit]
-    gpgsign = true
 
 # Include GitLab configuration for repos in ~/gitlab/
 [includeIf "gitdir:~/repos/gitlab/"]
@@ -16,17 +12,13 @@
 	path = ~/.config/git/r2d2_config
 
 [core]
-	excludesfile = ~/.config/git/ignore
 	whiteSpace = error
 
-[pull]
-	rebase = false
+[credential]
+	helper = osxkeychain
 
 [init]
 	defaultBranch = main
-
-[tag]
-	gpgSign = true
 
 [log]
 	abbrevCommit = true  # short commits
@@ -37,6 +29,3 @@
 	short = true
 	showStash = true
 	showUntrackedFiles = all  # show individual untracked files
-
-[credential]
-	helper = osxkeychain
