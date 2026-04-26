@@ -33,19 +33,6 @@ nvim-linux-x86_64.tar.gz"
 sudo tar -C /usr/local/bin -xzf nvim.tar.gz nvim
 sudo rm nvim.tar.gz
 
-# Install Oh My Zsh
-echo "Installing Oh My Zsh..."
-sh -c "$(curl -fsSL \
-    https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-
-# Install zsh plugins
-echo "Installing zsh plugins..."
-sleep 2
-git clone https://github.com/zsh-users/zsh-autosuggestions.git \
-    $ZSH_CUSTOM/plugins/zsh-autosuggestions
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git \
-    $ZSH_CUSTOM/plugins/zsh-syntax-highlighting
-
 # Stow dotfiles
 echo "Stowing dotfiles..."
 cd ~/dotfiles
