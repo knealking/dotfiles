@@ -5,12 +5,8 @@ ghostty
 raycast
 iterm2
 visual-studio-code
-visual-studio-code@insiders
-zed
 obsidian
 docker-desktop
-adobe-acrobat-pro
-logi-options+
 iina
 zoom
 slack
