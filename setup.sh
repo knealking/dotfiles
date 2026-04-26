@@ -41,7 +41,8 @@ sleep 2
 curl -Lo nvim.tar.gz \
     "https://github.com/neovim/neovim/releases/latest/download/\
 nvim-linux-x86_64.tar.gz"
-sudo tar -C /usr/local/bin -xzf nvim.tar.gz nvim
+sudo tar -C /usr/local/bin -xzf nvim.tar.gz \
+    --strip-components=2 nvim-linux-x86_64/bin/nvim
 sudo rm nvim.tar.gz
 
 # Install Yazi
@@ -49,6 +50,8 @@ echo ""
 echo "Installing Yazi..."
 sleep 2
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+source ~/.bashrc
 rustup update
 
 git clone https://github.com/sxyazi/yazi.git
