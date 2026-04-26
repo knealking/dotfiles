@@ -1,4 +1,8 @@
 .git
 .stow-local-ignore
+.config/nvim/lazy-lock.json
 
+installer.sh
+setup.sh
+apps.txt
 README.md
