@@ -1,6 +1,7 @@
 #!/usr/bin/env zsh
 
-# New MacOS setup script
+echo ""
+echo "Starting DotFiles Installer..."
 
 # Install Homebrew if it isn't already installed
 if ! command -v brew &>/dev/null; then
@@ -31,10 +32,12 @@ brew upgrade --cask
 brew cleanup
 
 # Git config name
+echo ""
 echo "Please enter your USERNAME for Git configuration:"
 read git_user_name
 
 # Git config email
+echo ""
 echo "Please enter your EMAIL for Git configuration:"
 read git_user_email
 
@@ -48,11 +51,13 @@ if test -d ~/.ssh/; then
     sudo rm -rf ~/.ssh/
 fi
 
+echo ""
 echo "Generating ssh keys..."
 ssh-keygen -t ed25519 -C "$git_user_email"
 echo "Starting the ssh-agent in the background..."
 eval "$(ssh-agent -s)"
 
+echo ""
 if ! test -f ~/.ssh/config; then
     echo "Config file does not exist. Creating config file..."
     touch ~/.ssh/config
@@ -65,12 +70,14 @@ if ! test -f ~/.ssh/config; then
     ssh-add --apple-use-keychain ~/.ssh/id_ed25519
 fi
 
+echo ""
 echo "Copying public key to clipboard..."
 pbcopy < ~/.ssh/id_ed25519.pub
 echo "Paste the key into GitHub. Press return after done:"
 read
 
 # Install Jetbrains Mono font
+echo ""
 echo "Installing Jetbrains Mono font..."
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/JetBrains/JetBrainsMono/master/install_manual.sh)"
 
@@ -102,5 +109,12 @@ while IFS= read -r app; do
         fi
     fi
 done < "$1"
+
+
+echo ""
+echo "Installing tmux plugin manager..."
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
+echo
 
 echo "Installation process completed."

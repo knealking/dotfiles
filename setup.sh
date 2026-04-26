@@ -1,5 +1,4 @@
-#!/usr/bin/env zsh
-
+#!/bin/sh
 
 # DotFiles Installer
 # -----------------
@@ -10,27 +9,17 @@
 # - Configures development environments (VS Code)
 
 # Install Xcode command line tools
+echo "Installing Xcode Command Line Tools..."
 xcode-select --install
 
+echo ""
 echo "Complete the installation of Xcode Command Line Tools before proceeding."
 echo "Press enter to continue..."
 read
 
-# dotfiles directory
-dotfiledir="${HOME}/dotfiles"
-
-# list of files/folders to symlink in ${homedir}
-files=(.zshrc .zprofile)
-
-# change to the dotfiles directory
-echo "Changing to the ${dotfiledir} directory"
-cd "${dotfiledir}" || exit
-
-# create symlinks (will overwrite old dotfiles)
-for file in "${files[@]}"; do
-    echo "Creating symlink to $file in home directory."
-    ln -sf "${dotfiledir}/.${file}" "${HOME}/.${file}"
-done
+echo ""
+echo "Restore dotfiles using stow..."
+stow .
 
 # Run the Homebrew Script
 ./brew.sh
