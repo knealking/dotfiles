@@ -167,7 +167,11 @@ if confirm "Set up SSH keys?"; then
     mkdir -p ~/.ssh
     chmod 700 ~/.ssh
     generate_ssh_key "github"
+    eval "$(ssh-agent -s)"
+    ssh-add ~/.ssh/id_ed25519_github
+
     generate_ssh_key "gitlab"
+    ssh-add ~/.ssh/id_ed25519_gitlab
 fi
 
 echo "Setup complete!"
