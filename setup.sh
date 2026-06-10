@@ -136,15 +136,19 @@ nvim-linux-x86_64.tar.gz"
     sudo rm nvim.tar.gz
 fi
 
+# Install Rust
+if confirm "Install Rust (rustup)?"; then
+    echo "Installing Rust..."
+    sleep 2
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+    source ~/.bashrc
+    rustup update
+fi
+
 # Install Yazi
 if confirm "Install Yazi?"; then
     echo "Installing Yazi..."
     sleep 2
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-
-    source ~/.bashrc
-    rustup update
-
     git clone https://github.com/sxyazi/yazi.git
     cd yazi
     cargo build --release --locked
