@@ -96,7 +96,6 @@ confirm() {
 detect_distro
 
 # Update system packages
-echo ""
 if confirm "Update system packages?"; then
     echo "Updating system packages..."
     sleep 2
@@ -104,7 +103,6 @@ if confirm "Update system packages?"; then
 fi
 
 # Install dependencies
-echo ""
 if confirm "Install dependencies?"; then
     echo "Installing dependencies..."
     sleep 2
@@ -112,7 +110,6 @@ if confirm "Install dependencies?"; then
 fi
 
 # Install lazygit
-echo ""
 if confirm "Install lazygit?"; then
     echo "Installing lazygit..."
     sleep 2
@@ -129,20 +126,17 @@ v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
 fi
 
 # Install Neovim
-echo ""
 if confirm "Install Neovim?"; then
     echo "Installing Neovim..."
     sleep 2
     curl -Lo nvim.tar.gz \
         "https://github.com/neovim/neovim/releases/latest/download/\
 nvim-linux-x86_64.tar.gz"
-    sudo tar -C /usr/local/bin -xzf nvim.tar.gz \
-        --strip-components=2 nvim-linux-x86_64/bin/nvim
+    sudo tar -C /usr/local -xzf nvim.tar.gz --strip-components=1
     sudo rm nvim.tar.gz
 fi
 
 # Install Yazi
-echo ""
 if confirm "Install Yazi?"; then
     echo "Installing Yazi..."
     sleep 2
@@ -159,14 +153,12 @@ if confirm "Install Yazi?"; then
 fi
 
 # Stow dotfiles
-echo ""
 if confirm "Stow dotfiles?"; then
     echo "Stowing dotfiles..."
     cd ~/dotfiles
     stow .
 fi
 
-echo ""
 if confirm "Set up SSH keys?"; then
     mkdir -p ~/.ssh
     chmod 700 ~/.ssh
@@ -174,5 +166,4 @@ if confirm "Set up SSH keys?"; then
     generate_ssh_key "gitlab"
 fi
 
-echo ""
 echo "Setup complete!"

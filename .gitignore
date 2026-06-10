@@ -31,3 +31,4 @@ obj/
 .vscode/
 .idea/
 .copilot/ide
+lazy-lock.json
