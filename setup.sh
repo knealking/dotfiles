@@ -96,9 +96,12 @@ confirm() {
 detect_distro
 
 # Update system packages
-echo "Updating system packages..."
-sleep 2
-sudo apt update && sudo apt upgrade -y
+echo ""
+if confirm "Update system packages?"; then
+    echo "Updating system packages..."
+    sleep 2
+    pkg_update
+fi
 
 # Install dependencies
 echo ""
