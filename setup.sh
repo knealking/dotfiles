@@ -110,6 +110,17 @@ if confirm "Install dependencies?"; then
     install_build_deps
 fi
 
+# Install Fonts
+if confirm "Install Nerd Fonts?"; then
+    echo "Installing Nerd Fonts..."
+    sleep 2
+    curl -Lo JetBrainsMono.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/JetBrainsMono.zip
+    mkdir -p ~/.local/share/fonts/JetBrainsMono
+    unzip ./JetBrainsMono.zip -d ~/.local/share/fonts/JetBrainsMono
+    rm ./JetBrainsMono.zip
+    fc-cache -fv
+fi
+
 # Install lazygit
 if confirm "Install lazygit?"; then
     echo "Installing lazygit..."
