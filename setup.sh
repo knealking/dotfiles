@@ -157,6 +157,23 @@ if confirm "Install Yazi?"; then
     cd -
 fi
 
+# Install VSCodea
+if confirm "Install VScode?"; then
+    sudo apt install wget gpg &&
+    wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft.gpg
+    sudo apt install wget gpg &&
+    wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft.gpg
+    sudo cat "Types: deb
+URIs: https://packages.microsoft.com/repos/code
+Suites: stable
+Components: main
+Architectures: amd64,arm64,armhf
+Signed-By: /usr/share/keyrings/microsoft.gpg
+" >> /etc/apt/sources.list.d/vscode.sources
+    sudo apt update &&
+    sudo apt install code
+fi
+
 # Stow dotfiles
 if confirm "Stow dotfiles?"; then
     echo "Stowing dotfiles..."
