@@ -121,6 +121,15 @@ if confirm "Install Nerd Fonts?"; then
     fc-cache -fv
 fi
 
+if confirm "Install tmux and plugins?"; then
+    echo "Installing tmux and plugins..."
+    sleep 2
+
+    sudo apt install tmux -y
+    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+    git clone -b v2.3.0 https://github.com/catppuccin/tmux.git ~/.tmux/plugins/catppuccin
+fi
+
 # Install lazygit
 if confirm "Install lazygit?"; then
     echo "Installing lazygit..."
