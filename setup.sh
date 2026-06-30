@@ -4,8 +4,9 @@
 generate_ssh_key() {
     ssh-keygen -t ed25519 -C "$1" -f ~/.ssh/id_ed25519_$1 -N ""
     echo ""
-    echo "=== $1 public key ==="
+    echo "--- $1 public key start ---"
     cat ~/.ssh/id_ed25519_$1.pub
+    echo "--- $1 public key end ---"
 }
 
 # Detect Linux distribution family
