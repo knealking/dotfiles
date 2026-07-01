@@ -96,21 +96,18 @@ confirm() {
 # Detect distro before doing anything
 detect_distro
 
-# Update system packages
 if confirm "Update system packages?"; then
     echo "Updating system packages..."
     sleep 2
     pkg_update
 fi
 
-# Install dependencies
 if confirm "Install dependencies?"; then
     echo "Installing dependencies..."
     sleep 2
     install_build_deps
 fi
 
-# Install Fonts
 if confirm "Install Nerd Fonts?"; then
     echo "Installing Nerd Fonts..."
     sleep 2
@@ -129,7 +126,13 @@ if confirm "Install tmux and plugins?"; then
     git clone -b v2.3.0 https://github.com/catppuccin/tmux.git ~/.tmux/plugins/catppuccin
 fi
 
-# Install lazygit
+if confirm "Install zsh-plugins?"; then
+    echo "Installing zsh plugins..."
+    sleep 2
+    git clone https://github.com/zsh-users/zsh-autosuggestions.git ~/.oh-my-zsh/plugins/zsh-autosuggestions
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/plugins/zsh-syntax-highlighting
+fi
+
 if confirm "Install lazygit?"; then
     echo "Installing lazygit..."
     sleep 2
@@ -139,7 +142,6 @@ if confirm "Install lazygit?"; then
     sudo rm lazygit.tar.gz
 fi
 
-# Install Neovim
 if confirm "Install Neovim?"; then
     echo "Installing Neovim..."
     sleep 2
@@ -148,7 +150,6 @@ if confirm "Install Neovim?"; then
     sudo rm nvim.tar.gz
 fi
 
-# Install Rust
 if confirm "Install Rust (rustup)?"; then
     echo "Installing Rust..."
     sleep 2
@@ -157,7 +158,6 @@ if confirm "Install Rust (rustup)?"; then
     rustup update
 fi
 
-# Install Yazi
 if confirm "Install Yazi?"; then
     echo "Installing Yazi..."
     sleep 2
@@ -168,7 +168,6 @@ if confirm "Install Yazi?"; then
     cd -
 fi
 
-# Install VSCode
 if confirm "Install VSCode?"; then
     sudo apt install wget gpg &&
     wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft.gpg
@@ -186,7 +185,6 @@ EOF
     sudo apt install code
 fi
 
-# Stow dotfiles
 if confirm "Stow dotfiles?"; then
     echo "Stowing dotfiles..."
     sleep 2
