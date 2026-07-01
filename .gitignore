@@ -32,3 +32,4 @@ obj/
 .idea/
 .copilot/ide
 lazy-lock.json
+ide/
