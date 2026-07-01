@@ -33,4 +33,24 @@ obj/
 .copilot/ide
 lazy-lock.json
 ide/
+
+# Miscellaneous
 plugins/
+backups/
+cache/
+downloads/
+marketplaces/
+projects/
+sessions/
+history/
+tmp/
+
+.credentials.json
+history.jsonl
+policy-limits.json
+remote-settings.json
+installation_id
+projects.json
+state.json
+trustedFolders.json
+google_accounts.json
