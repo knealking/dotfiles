@@ -124,8 +124,7 @@ fi
 if confirm "Install tmux and plugins?"; then
     echo "Installing tmux and plugins..."
     sleep 2
-
-    sudo apt install tmux -y
+    pkg_install tmux
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
     git clone -b v2.3.0 https://github.com/catppuccin/tmux.git ~/.tmux/plugins/catppuccin
 fi
@@ -134,14 +133,8 @@ fi
 if confirm "Install lazygit?"; then
     echo "Installing lazygit..."
     sleep 2
-    LAZYGIT_VERSION=$(curl -s \
-        "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" \
-        | \grep -Po '"tag_name": *"v\K[^"]*')
-
-    curl -Lo lazygit.tar.gz \
-        "https://github.com/jesseduffield/lazygit/releases/download/\
-v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
-
+    LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": *"v\K[^"]*')
+    curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
     sudo tar -C /usr/local/bin -xzf lazygit.tar.gz lazygit
     sudo rm lazygit.tar.gz
 fi
@@ -150,9 +143,7 @@ fi
 if confirm "Install Neovim?"; then
     echo "Installing Neovim..."
     sleep 2
-    curl -Lo nvim.tar.gz \
-        "https://github.com/neovim/neovim/releases/latest/download/\
-nvim-linux-x86_64.tar.gz"
+    curl -Lo nvim.tar.gz "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz"
     sudo tar -C /usr/local -xzf nvim.tar.gz --strip-components=1
     sudo rm nvim.tar.gz
 fi
@@ -177,19 +168,20 @@ if confirm "Install Yazi?"; then
     cd -
 fi
 
-# Install VSCodea
-if confirm "Install VScode?"; then
+# Install VSCode
+if confirm "Install VSCode?"; then
     sudo apt install wget gpg &&
     wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft.gpg
     sudo apt install wget gpg &&
     wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft.gpg
-    sudo cat "Types: deb
+    sudo tee /etc/apt/sources.list.d/vscode.sources << EOF
+Types: deb
 URIs: https://packages.microsoft.com/repos/code
 Suites: stable
 Components: main
 Architectures: amd64,arm64,armhf
 Signed-By: /usr/share/keyrings/microsoft.gpg
-" >> /etc/apt/sources.list.d/vscode.sources
+EOF
     sudo apt update &&
     sudo apt install code
 fi
@@ -197,8 +189,8 @@ fi
 # Stow dotfiles
 if confirm "Stow dotfiles?"; then
     echo "Stowing dotfiles..."
-    cd ~/dotfiles
-    stow .
+    sleep 2
+    stow . --adopt
 fi
 
 if confirm "Set up SSH keys?"; then
