@@ -33,3 +33,4 @@ obj/
 .copilot/ide
 lazy-lock.json
 ide/
+plugins/
