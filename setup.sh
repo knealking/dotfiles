@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Setup SSH keys
 generate_ssh_key() {
@@ -75,7 +75,7 @@ pkg_install() {
 
 install_build_deps() {
     case "$DISTRO_FAMILY" in
-        debian)   pkg_install build-essential git zsh stow curl ;;
+        debian)   pkg_install build-essential libssl-dev git zsh stow curl wget python3 python3-venv ;;
         arch)     pkg_install base-devel git zsh stow curl ;;
         fedora)   pkg_install @development-tools git zsh stow curl ;;
         rhel)     pkg_install @development-tools git zsh stow curl ;;
@@ -108,16 +108,6 @@ if confirm "Install dependencies?"; then
     install_build_deps
 fi
 
-if confirm "Install Nerd Fonts?"; then
-    echo "Installing Nerd Fonts..."
-    sleep 2
-    curl -Lo JetBrainsMono.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/JetBrainsMono.zip
-    mkdir -p ~/.local/share/fonts/JetBrainsMono
-    unzip ./JetBrainsMono.zip -d ~/.local/share/fonts/JetBrainsMono
-    rm ./JetBrainsMono.zip
-    fc-cache -fv
-fi
-
 if confirm "Install tmux and plugins?"; then
     echo "Installing tmux and plugins..."
     sleep 2
@@ -126,46 +116,12 @@ if confirm "Install tmux and plugins?"; then
     git clone -b v2.3.0 https://github.com/catppuccin/tmux.git ~/.tmux/plugins/catppuccin
 fi
 
-if confirm "Install zsh-plugins?"; then
-    echo "Installing zsh plugins..."
-    sleep 2
-    git clone https://github.com/zsh-users/zsh-autosuggestions.git ~/.oh-my-zsh/plugins/zsh-autosuggestions
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/plugins/zsh-syntax-highlighting
-fi
-
-if confirm "Install lazygit?"; then
-    echo "Installing lazygit..."
-    sleep 2
-    LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": *"v\K[^"]*')
-    curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
-    sudo tar -C /usr/local/bin -xzf lazygit.tar.gz lazygit
-    sudo rm lazygit.tar.gz
-fi
-
 if confirm "Install Neovim?"; then
     echo "Installing Neovim..."
     sleep 2
     curl -Lo nvim.tar.gz "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz"
     sudo tar -C /usr/local -xzf nvim.tar.gz --strip-components=1
     sudo rm nvim.tar.gz
-fi
-
-if confirm "Install Rust (rustup)?"; then
-    echo "Installing Rust..."
-    sleep 2
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-    source ~/.bashrc
-    rustup update
-fi
-
-if confirm "Install Yazi?"; then
-    echo "Installing Yazi..."
-    sleep 2
-    git clone https://github.com/sxyazi/yazi.git
-    cd yazi
-    cargo build --release --locked
-    sudo mv target/release/ya target/release/yazi /usr/local/bin/
-    cd -
 fi
 
 if confirm "Install VSCode?"; then
@@ -200,6 +156,16 @@ if confirm "Set up SSH keys?"; then
 
     generate_ssh_key "gitlab"
     ssh-add ~/.ssh/id_ed25519_gitlab
+fi
+
+if confirm "Install Nerd Fonts?"; then
+    echo "Installing Nerd Fonts..."
+    sleep 2
+    curl -Lo JetBrainsMono.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/JetBrainsMono.zip
+    mkdir -p ~/.local/share/fonts/JetBrainsMono
+    unzip ./JetBrainsMono.zip -d ~/.local/share/fonts/JetBrainsMono
+    rm ./JetBrainsMono.zip
+    fc-cache -fv
 fi
 
 echo "Setup complete!"
