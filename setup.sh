@@ -154,18 +154,23 @@ if confirm "Update system packages?"; then
     pkg_update
 fi
 
-if confirm "Install dependencies?"; then
+if confirm "Install dependencies? ($(deps_for_distro))"; then
     echo "Installing dependencies..."
     sleep 2
     install_build_deps
 fi
 
-if confirm "Install tmux and plugins?"; then
-    echo "Installing tmux and plugins..."
+if confirm "Install Oh My Zsh?"; then
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+
+    install_zsh_plugins
+fi
+
+if confirm "Install tmux?"; then
+    echo "Installing tmux..."
     sleep 2
     pkg_install tmux
-    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-    git clone -b v2.3.0 https://github.com/catppuccin/tmux.git ~/.tmux/plugins/catppuccin
+    install_tmux_plugins
 fi
 
 if confirm "Install Neovim?"; then
