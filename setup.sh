@@ -1,5 +1,13 @@
 #!/bin/bash
 
+DEBIAN_DEPS="build-essential libssl-dev git zsh stow curl wget python3 python3-venv"
+ARCH_DEPS="base-devel git zsh stow curl"
+FEDORA_DEPS="@development-tools git zsh stow curl"
+ALPINE_DEPS="build-base git zsh stow curl"
+
+ZSH_PLUGINS=("zsh-autosuggestions" "zsh-syntax-highlighting")
+TMUX_PLUGINS=("tpm" "catppuccin")
+
 # Setup SSH keys
 generate_ssh_key() {
     ssh-keygen -t ed25519 -C "$1" -f ~/.ssh/id_ed25519_$1 -N ""
