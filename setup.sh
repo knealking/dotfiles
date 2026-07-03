@@ -81,15 +81,17 @@ pkg_install() {
     esac
 }
 
-install_build_deps() {
+deps_for_distro() {
     case "$DISTRO_FAMILY" in
-        debian)   pkg_install build-essential libssl-dev git zsh stow curl wget python3 python3-venv ;;
-        arch)     pkg_install base-devel git zsh stow curl ;;
-        fedora)   pkg_install @development-tools git zsh stow curl ;;
-        rhel)     pkg_install @development-tools git zsh stow curl ;;
-        opensuse) pkg_install patterns-devel-base-devel_basis git zsh stow curl ;;
-        alpine)   pkg_install build-base git zsh stow curl ;;
+        debian)   echo "$DEBIAN_DEPS" ;;
+        arch)     echo "$ARCH_DEPS" ;;
+        fedora)   echo "$FEDORA_DEPS" ;;
+        alpine)   echo "$ALPINE_DEPS" ;;
     esac
+}
+
+install_build_deps() {
+    pkg_install $(deps_for_distro)
 }
 
 confirm() {
