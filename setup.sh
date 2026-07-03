@@ -103,6 +103,22 @@ confirm() {
     esac
 }
 
+zsh_plugin_repo() {
+    case "$1" in
+        zsh-autosuggestions)     echo "https://github.com/zsh-users/zsh-autosuggestions.git" ;;
+        zsh-syntax-highlighting) echo "https://github.com/zsh-users/zsh-syntax-highlighting.git" ;;
+    esac
+}
+
+install_zsh_plugins() {
+    for plugin in "${ZSH_PLUGINS[@]}"; do
+        if confirm "Install zsh plugin: $plugin?"; then
+            git clone "$(zsh_plugin_repo "$plugin")" ~/.oh-my-zsh/plugins/"$plugin"
+        fi
+    done
+}
+
+
 # Detect distro before doing anything
 detect_distro
 
