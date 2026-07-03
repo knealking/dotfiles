@@ -15,6 +15,8 @@ generate_ssh_key() {
     echo "--- $1 public key start ---"
     cat ~/.ssh/id_ed25519_$1.pub
     echo "--- $1 public key end ---"
+    eval "$(ssh-agent -s)"
+    ssh-add ~/.ssh/id_ed25519_$1
 }
 
 # Detect Linux distribution family
@@ -208,11 +210,7 @@ if confirm "Set up SSH keys?"; then
     mkdir -p ~/.ssh
     chmod 700 ~/.ssh
     generate_ssh_key "github"
-    eval "$(ssh-agent -s)"
-    ssh-add ~/.ssh/id_ed25519_github
-
     generate_ssh_key "gitlab"
-    ssh-add ~/.ssh/id_ed25519_gitlab
 fi
 
 if confirm "Install Nerd Fonts?"; then
