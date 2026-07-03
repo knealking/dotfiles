@@ -44,8 +44,11 @@ projects/
 sessions/
 history/
 tmp/
+shell-snapshots/
+file-history/
 
 .credentials.json
+.last-update-result.json
 history.jsonl
 policy-limits.json
 remote-settings.json
