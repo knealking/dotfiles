@@ -118,6 +118,32 @@ install_zsh_plugins() {
     done
 }
 
+tmux_plugin_repo() {
+    case "$1" in
+        tpm)        echo "https://github.com/tmux-plugins/tpm" ;;
+        catppuccin) echo "https://github.com/catppuccin/tmux.git" ;;
+    esac
+}
+
+tmux_plugin_branch() {
+    case "$1" in
+        catppuccin) echo "v2.3.0" ;;
+    esac
+}
+
+install_tmux_plugins() {
+    for plugin in "${TMUX_PLUGINS[@]}"; do
+        if confirm "Install tmux plugin: $plugin?"; then
+            branch="$(tmux_plugin_branch "$plugin")"
+            if [ -n "$branch" ]; then
+                git clone -b "$branch" "$(tmux_plugin_repo "$plugin")" ~/.tmux/plugins/"$plugin"
+            else
+                git clone "$(tmux_plugin_repo "$plugin")" ~/.tmux/plugins/"$plugin"
+            fi
+        fi
+    done
+}
+
 
 # Detect distro before doing anything
 detect_distro
