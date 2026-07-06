@@ -1,5 +1,5 @@
 # Use Ubuntu as the base image
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 # Update package lists and install essential C development tools
 RUN apt-get update && apt-get install -y \
