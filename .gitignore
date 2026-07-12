@@ -49,6 +49,7 @@ file-history/
 
 .credentials.json
 .last-update-result.json
+.last-cleanup
 history.jsonl
 policy-limits.json
 remote-settings.json
