@@ -6,7 +6,6 @@ FEDORA_DEPS="@development-tools git zsh stow curl"
 ALPINE_DEPS="build-base git zsh stow curl"
 
 ZSH_PLUGINS=("zsh-autosuggestions" "zsh-syntax-highlighting")
-TMUX_PLUGINS=("tpm" "catppuccin")
 
 # Setup SSH keys
 generate_ssh_key() {
@@ -133,20 +132,6 @@ tmux_plugin_branch() {
     esac
 }
 
-install_tmux_plugins() {
-    for plugin in "${TMUX_PLUGINS[@]}"; do
-        if confirm "Install tmux plugin: $plugin?"; then
-            branch="$(tmux_plugin_branch "$plugin")"
-            if [ -n "$branch" ]; then
-                git clone -b "$branch" "$(tmux_plugin_repo "$plugin")" ~/.tmux/plugins/"$plugin"
-            else
-                git clone "$(tmux_plugin_repo "$plugin")" ~/.tmux/plugins/"$plugin"
-            fi
-        fi
-    done
-}
-
-
 # Detect distro before doing anything
 detect_distro
 
@@ -172,7 +157,6 @@ if confirm "Install tmux?"; then
     echo "Installing tmux..."
     sleep 2
     pkg_install tmux
-    install_tmux_plugins
 fi
 
 if confirm "Install Neovim?"; then
