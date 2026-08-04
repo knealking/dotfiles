@@ -119,17 +119,25 @@ install_zsh_plugins() {
     done
 }
 
-tmux_plugin_repo() {
-    case "$1" in
-        tpm)        echo "https://github.com/tmux-plugins/tpm" ;;
-        catppuccin) echo "https://github.com/catppuccin/tmux.git" ;;
-    esac
-}
+configure_zsh() {
+    mkdir -p "$HOME/.config/zsh" "$HOME/.cache/zsh" "$HOME/.local/state/zsh"
 
-tmux_plugin_branch() {
-    case "$1" in
-        catppuccin) echo "v2.3.0" ;;
-    esac
+    if [ ! -f /etc/zsh/zshenv ]; then
+        sudo touch /etc/zsh/zshenv
+    fi
+
+    if ! grep -q 'export ZDOTDIR' /etc/zsh/zshenv; then
+        sudo tee -a /etc/zsh/zshenv >/dev/null <<'EOF'
+
+if [[ -z "$XDG_CONFIG_HOME" ]]; then
+    export XDG_CONFIG_HOME="$HOME/.config"
+fi
+
+if [[ -d "$XDG_CONFIG_HOME/zsh" ]]; then
+    export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
+fi
+EOF
+    fi
 }
 
 # Detect distro before doing anything
@@ -188,6 +196,12 @@ if confirm "Stow dotfiles?"; then
     echo "Stowing dotfiles..."
     sleep 2
     stow . --adopt
+fi
+
+if confirm "Configure zsh to use the dotfiles directory?"; then
+    echo "Configuring zsh..."
+    sleep 2
+    configure_zsh
 fi
 
 if confirm "Set up SSH keys?"; then
