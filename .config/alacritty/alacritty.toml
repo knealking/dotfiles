@@ -13,4 +13,4 @@ size = 12
 family = "JetBrainsMono Nerd Font"
 
 [general]
-import = ["C:\\Users\\neal\\AppData\\Roaming\\alacritty\\themes\\themes\\catppuccin_mocha.toml"]
+import = ["~/.config/alacritty/themes/themes/catppuccin_mocha.toml"]
