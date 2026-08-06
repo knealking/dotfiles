@@ -1,0 +1,16 @@
+[window]
+padding.x = 10
+padding.y = 10
+
+[window.dimensions]
+columns = 100
+lines = 30
+
+[font]
+size = 12
+
+[font.normal]
+family = "JetBrainsMono Nerd Font"
+
+[general]
+import = ["C:\\Users\\neal\\AppData\\Roaming\\alacritty\\themes\\themes\\catppuccin_mocha.toml"]
