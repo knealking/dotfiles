@@ -26,6 +26,6 @@
 	short = true
 	showStash = true
 	showUntrackedFiles = all  # show individual untracked files
-
 [credential]
-	helper = store
+	credentialStore = secretservice
+	helper = /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret
