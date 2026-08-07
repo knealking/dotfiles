@@ -5,7 +5,7 @@
 import argparse
 import os
 import sys
-from pathlib import Path, PurePosixPath, PureWindowsPath
+from pathlib import Path, PurePosixPath
 
 
 def detect_os():
