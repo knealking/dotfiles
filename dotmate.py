@@ -101,36 +101,18 @@ def skip_path(path: Path, ignore_list: list) -> bool:
     if not ignore_list:
         return False
 
-    if OS_TYPE == "Windows":
-        path_obj = PureWindowsPath(path.as_posix())
-        separator = "\\"
-    else:
-        path_obj = PurePosixPath(path.as_posix())
-        separator = "/"
-
-    path_parts = set(path_obj.parts)
+    normalized_path = PurePosixPath(path.as_posix())
 
     for entry in ignore_list:
-        normalized_entry = entry.strip().strip("/\\")
-        if not normalized_entry:
-            continue
-
-        if OS_TYPE == "Windows":
-            entry_obj = PureWindowsPath(normalized_entry)
-        else:
-            entry_obj = PurePosixPath(normalized_entry)
-
-        if entry_obj.parts and entry_obj.parts[0] in path_parts:
+        ignore_path = PurePosixPath(entry.rstrip("/"))
+        if normalized_path == ignore_path:
             return True
 
-        if normalized_entry in path_parts:
-            return True
-
-        relative_path = path_obj.as_posix()
-        if relative_path == normalized_entry or relative_path.startswith(
-            normalized_entry + separator
-        ):
-            return True
+        try:
+            if normalized_path.is_relative_to(ignore_path):
+                return True
+        except ValueError:
+            pass
 
     return False
 
@@ -179,7 +161,6 @@ def dotmate(os_type: str, args: argparse.Namespace, ignore_list: list):
                 for dotfile in dotfiles:
                     relative_path = dotfile.relative_to(args.source)
                     target_path = args.target / relative_path
-                    # print(f"  {dotfile} -> {target_path}")
                     create_symlink(dotfile, target_path)
 
             except OSError as e:
@@ -195,11 +176,8 @@ def main():
     """Main function to manage dotfiles."""
 
     args = get_args()
-    os_type = detect_os()
-
     ignore_list = get_ignore_list(args.ignore)
-
-    dotmate(os_type, args, ignore_list)
+    dotmate(OS_TYPE, args, ignore_list)
 
 
 if __name__ == "__main__":
