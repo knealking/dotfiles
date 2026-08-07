@@ -1,3 +1,11 @@
-.git
+.git/
+.mypy_cache/
+.gitignore
+.stow-local-ignore
+.zcompdump
+.config/zsh/plugins/
+__pycache__
 setup.sh
+extras.sh
+dotmate.py
 README.md
