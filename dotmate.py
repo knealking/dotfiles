@@ -171,32 +171,32 @@ def dotmate(os_type: str, args: argparse.Namespace, ignore_list: list):
         print(f"Source does not exist: {args.source}")
         return
 
-    match os_type:
-        case "Linux" | "macOS":
-            print(f"{GREEN}Detected OS: {os_type}{RESET}")
+    try:
+        print(f"{GREEN}Detected OS: {os_type}{RESET}")
 
-            try:
-                dotfiles = discover_dotfiles(args.source, ignore_list)
+        dotfiles = discover_dotfiles(args.source, ignore_list)
+        dotfile_names = [
+            dotfile.relative_to(args.source).as_posix() for dotfile in dotfiles
+        ]
 
-                print(f"Found {len(dotfiles)} dotfiles in {args.source}")
-                dotfile_names = [
-                    dotfile.relative_to(args.source).as_posix() for dotfile in dotfiles
-                ]
-                print_list("Dotfiles", dotfile_names)
-                print_list("Ignore list", ignore_list)
+        print(f"Found {len(dotfiles)} dotfiles in {args.source}")
+        print_list("Dotfiles", dotfile_names)
+        print_list("Ignore list", ignore_list)
 
+        match os_type:
+            case "Linux" | "macOS":
                 for dotfile in dotfiles:
                     relative_path = dotfile.relative_to(args.source)
                     target_path = args.target / relative_path
                     create_symlink(dotfile, target_path)
 
-            except OSError as e:
-                print(f"Error creating symlink: {e}")
+            case "Windows":
+                print("Windows is not fully supported yet.")
+            case _:
+                print(f"Unsupported OS: {os_type}")
 
-        case "Windows":
-            print("Windows is not fully supported yet.")
-        case _:
-            print(f"Unsupported OS: {os_type}")
+    except OSError as e:
+        print(f"Error creating symlink: {e}")
 
 
 def main():
