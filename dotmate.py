@@ -3,9 +3,18 @@
 """A simple dotfiles manager that uses symlinks to manage dotfiles in a git repository."""
 
 import argparse
+import logging
 import os
 import sys
 from pathlib import Path, PurePosixPath
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+
+GREEN = "\033[92m"
+RED = "\033[91m"
+BLUE = "\033[94m"
+RESET = "\033[0m"
 
 
 def detect_os():
@@ -62,7 +71,24 @@ def get_args():
         help="Adopt existing files as symlinks.",
     )
 
+    parser.add_argument(
+        "--verbose",
+        "-v",
+        action="store_true",
+        help="Enable verbose output.",
+    )
+
+    if parser.parse_args().verbose:
+        logger.setLevel(logging.DEBUG)
+
     return parser.parse_args()
+
+
+def print_list(title: str, items: list):
+    """Print a list of items with a title."""
+    logger.debug(f"{title}:")
+    for item in items:
+        logger.debug(f"  {item}")
 
 
 def get_ignore_list(ignore_file: Path):
@@ -88,12 +114,12 @@ def create_symlink(source: Path, target: Path, force: bool = False):
 
         target.parent.mkdir(parents=True, exist_ok=True)
         os.symlink(source.resolve(), target)
-        print(f"  {target} -> {source}")
+        print(f"  {GREEN}{target} -> {source}{RESET}")
 
     except FileExistsError:
-        print(f"Symlink already exists: {target}")
+        print(f"  {RED}Symlink already exists: {target}{RESET}")
     except OSError as e:
-        print(f"Error creating symlink: {e}")
+        print(f"  {RED}Error creating symlink: {e}{RESET}")
 
 
 def skip_path(path: Path, ignore_list: list) -> bool:
@@ -147,7 +173,8 @@ def dotmate(os_type: str, args: argparse.Namespace, ignore_list: list):
 
     match os_type:
         case "Linux" | "macOS":
-            print(f"Detected OS: {os_type}")
+            print(f"{GREEN}Detected OS: {os_type}{RESET}")
+
             try:
                 dotfiles = discover_dotfiles(args.source, ignore_list)
 
@@ -155,8 +182,8 @@ def dotmate(os_type: str, args: argparse.Namespace, ignore_list: list):
                 dotfile_names = [
                     dotfile.relative_to(args.source).as_posix() for dotfile in dotfiles
                 ]
-                print(f"Dotfiles: {dotfile_names}")
-                print(f"Ignore list: {ignore_list}")
+                print_list("Dotfiles", dotfile_names)
+                print_list("Ignore list", ignore_list)
 
                 for dotfile in dotfiles:
                     relative_path = dotfile.relative_to(args.source)
