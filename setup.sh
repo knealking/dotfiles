@@ -1,22 +1,10 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-DEBIAN_DEPS="build-essential libssl-dev git zsh stow curl wget python3 python3-venv"
-ARCH_DEPS="base-devel git zsh stow curl"
-FEDORA_DEPS="@development-tools git zsh stow curl"
-ALPINE_DEPS="build-base git zsh stow curl"
+DEBIAN_DEPS="build-essential libssl-dev git zsh stow curl wget python3 python3-venv eza bat fd-find fzf ripgrep"
+ARCH_DEPS="base-devel git zsh stow curl eza bat fd fzf ripgrep"
+FEDORA_DEPS="@development-tools git zsh stow curl eza bat fd-find fzf ripgrep"
+ALPINE_DEPS="build-base git zsh stow curl exa bat fd-find fzf ripgrep"
 
-ZSH_PLUGINS=("zsh-autosuggestions" "zsh-syntax-highlighting")
-
-# Setup SSH keys
-generate_ssh_key() {
-    ssh-keygen -t ed25519 -C "$1" -f ~/.ssh/id_ed25519_$1 -N ""
-    echo ""
-    echo "--- $1 public key start ---"
-    cat ~/.ssh/id_ed25519_$1.pub
-    echo "--- $1 public key end ---"
-    eval "$(ssh-agent -s)"
-    ssh-add ~/.ssh/id_ed25519_$1
-}
 
 # Detect Linux distribution family
 detect_distro() {
@@ -104,41 +92,16 @@ confirm() {
     esac
 }
 
-zsh_plugin_repo() {
-    case "$1" in
-        zsh-autosuggestions)     echo "https://github.com/zsh-users/zsh-autosuggestions.git" ;;
-        zsh-syntax-highlighting) echo "https://github.com/zsh-users/zsh-syntax-highlighting.git" ;;
-    esac
-}
-
-install_zsh_plugins() {
-    for plugin in "${ZSH_PLUGINS[@]}"; do
-        if confirm "Install zsh plugin: $plugin?"; then
-            git clone "$(zsh_plugin_repo "$plugin")" ~/.oh-my-zsh/plugins/"$plugin"
-        fi
-    done
-}
-
 configure_zsh() {
     mkdir -p "$HOME/.config/zsh" "$HOME/.cache/zsh" "$HOME/.local/state/zsh"
 
-    if [ ! -f /etc/zsh/zshenv ]; then
-        sudo touch /etc/zsh/zshenv
-    fi
-
-    if ! grep -q 'export ZDOTDIR' /etc/zsh/zshenv; then
-        sudo tee -a /etc/zsh/zshenv >/dev/null <<'EOF'
-
-if [[ -z "$XDG_CONFIG_HOME" ]]; then
-    export XDG_CONFIG_HOME="$HOME/.config"
-fi
-
-if [[ -d "$XDG_CONFIG_HOME/zsh" ]]; then
-    export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
-fi
+    sudo tee -a /etc/zsh/zshenv >/dev/null <<'EOF'
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 EOF
-    fi
 }
+
+# -------------------------------------------------------
 
 # Detect distro before doing anything
 detect_distro
@@ -155,62 +118,6 @@ if confirm "Install dependencies? ($(deps_for_distro))"; then
     install_build_deps
 fi
 
-if confirm "Install Oh My Zsh?"; then
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-
-    install_zsh_plugins
-fi
-
-if confirm "Install tmux?"; then
-    echo "Installing tmux..."
-    sleep 2
-    pkg_install tmux
-fi
-
-if confirm "Install Neovim?"; then
-    echo "Installing Neovim..."
-    sleep 2
-    curl -Lo nvim.tar.gz "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz"
-    sudo tar -C /usr/local -xzf nvim.tar.gz --strip-components=1
-    sudo rm nvim.tar.gz
-fi
-
-if confirm "Install VSCode?"; then
-    sudo apt install wget gpg &&
-    wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft.gpg
-    sudo apt install wget gpg &&
-    wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft.gpg
-    sudo tee /etc/apt/sources.list.d/vscode.sources << EOF
-Types: deb
-URIs: https://packages.microsoft.com/repos/code
-Suites: stable
-Components: main
-Architectures: amd64,arm64,armhf
-Signed-By: /usr/share/keyrings/microsoft.gpg
-EOF
-    sudo apt update &&
-    sudo apt install code
-fi
-
-if confirm "Stow dotfiles?"; then
-    echo "Stowing dotfiles..."
-    sleep 2
-    stow . --adopt
-fi
-
-if confirm "Configure zsh to use the dotfiles directory?"; then
-    echo "Configuring zsh..."
-    sleep 2
-    configure_zsh
-fi
-
-if confirm "Set up SSH keys?"; then
-    mkdir -p ~/.ssh
-    chmod 700 ~/.ssh
-    generate_ssh_key "github"
-    generate_ssh_key "gitlab"
-fi
-
 if confirm "Install Nerd Fonts?"; then
     echo "Installing Nerd Fonts..."
     sleep 2
@@ -219,6 +126,18 @@ if confirm "Install Nerd Fonts?"; then
     unzip ./JetBrainsMono.zip -d ~/.local/share/fonts/JetBrainsMono
     rm ./JetBrainsMono.zip
     fc-cache -fv
+fi
+
+if confirm "Configure zsh to use the dotfiles directory?"; then
+    echo "Configuring zsh..."
+    sleep 2
+    configure_zsh
+fi
+
+if confirm "Link dotfiles to home directory?"; then
+    echo "Linking dotfiles..."
+    sleep 2
+    ./dotmate.py
 fi
 
 echo "Setup complete!"
