@@ -93,7 +93,7 @@ confirm() {
 }
 
 configure_zsh() {
-    mkdir -p "$HOME/.config/zsh" "$HOME/.cache/zsh" "$HOME/.local/state/zsh"
+    mkdir -p "$HOME/.cache/zsh" "$HOME/.local/state/zsh"
 
     sudo tee -a /etc/zsh/zshenv >/dev/null <<'EOF'
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
