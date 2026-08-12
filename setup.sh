@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-DEBIAN_DEPS="build-essential libssl-dev git zsh stow curl wget python3 python3-venv eza bat fd-find fzf ripgrep"
+DEBIAN_DEPS="build-essential git zsh curl wget python3 python3-venv eza bat fd-find fzf ripgrep tmux libssl-dev"
 ARCH_DEPS="base-devel git zsh stow curl eza bat fd fzf ripgrep"
 FEDORA_DEPS="@development-tools git zsh stow curl eza bat fd-find fzf ripgrep"
 ALPINE_DEPS="build-base git zsh stow curl exa bat fd-find fzf ripgrep"

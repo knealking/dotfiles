@@ -20,12 +20,6 @@ generate_ssh_key() {
     ssh-add ~/.ssh/id_ed25519_$1
 }
 
-if confirm "Install tmux?"; then
-    echo "Installing tmux..."
-    sleep 2
-    pkg_install tmux
-fi
-
 if confirm "Install Neovim?"; then
     echo "Installing Neovim..."
     sleep 2
