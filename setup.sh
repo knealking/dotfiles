@@ -4,6 +4,7 @@ DEBIAN_DEPS="build-essential git zsh curl wget python3 python3-venv eza bat fd-f
 ARCH_DEPS="base-devel git zsh stow curl eza bat fd fzf ripgrep"
 FEDORA_DEPS="@development-tools git zsh stow curl eza bat fd-find fzf ripgrep"
 ALPINE_DEPS="build-base git zsh stow curl exa bat fd-find fzf ripgrep"
+MACOS_DEPS="xcode-select"
 
 
 # Detect Linux distribution family
@@ -20,6 +21,8 @@ detect_distro() {
     case "$DISTRO_ID" in
         ubuntu|debian|linuxmint|pop|elementary|zorin|kali|raspbian)
             DISTRO_FAMILY="debian" ;;
+        darwin)
+            DISTRO_FAMILY="macos" ;;
         arch|manjaro|endeavouros|garuda|artix)
             DISTRO_FAMILY="arch" ;;
         fedora)
@@ -56,12 +59,14 @@ pkg_update() {
         rhel)     sudo dnf upgrade -y ;;
         opensuse) sudo zypper refresh && sudo zypper update -y ;;
         alpine)   sudo apk update && sudo apk upgrade ;;
+        macos)    brew update && brew upgrade ;;
     esac
 }
 
 pkg_install() {
     case "$DISTRO_FAMILY" in
         debian)   sudo apt install -y "$@" ;;
+        macos)    brew install "$@" ;;
         arch)     sudo pacman -S --noconfirm "$@" ;;
         fedora)   sudo dnf install -y "$@" ;;
         rhel)     sudo dnf install -y "$@" ;;
@@ -73,6 +78,7 @@ pkg_install() {
 deps_for_distro() {
     case "$DISTRO_FAMILY" in
         debian)   echo "$DEBIAN_DEPS" ;;
+        macos)    echo "$MACOS_DEPS" ;;
         arch)     echo "$ARCH_DEPS" ;;
         fedora)   echo "$FEDORA_DEPS" ;;
         alpine)   echo "$ALPINE_DEPS" ;;
