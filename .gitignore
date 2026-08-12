@@ -32,29 +32,6 @@ obj/
 .idea/
 .copilot/ide
 lazy-lock.json
-ide/
 
-# Miscellaneous
-plugins/
-backups/
-cache/
-downloads/
-marketplaces/
-projects/
-sessions/
-history/
-tmp/
-shell-snapshots/
-file-history/
-
-.credentials.json
-.last-update-result.json
-.last-cleanup
-history.jsonl
-policy-limits.json
-remote-settings.json
-installation_id
-projects.json
-state.json
-trustedFolders.json
-google_accounts.json
+# Artifacts
+.zcompdump
