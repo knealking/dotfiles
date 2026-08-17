@@ -1,0 +1,28 @@
+# Global git configuration
+[user]
+	name = knealking
+	email = 50931322+knealking@users.noreply.github.com
+
+# Include GitLab configuration for repos in ~/gitlab/
+[includeIf "gitdir:~/repos/gitlab/"]
+	path = ~/.config/git/gl_config
+
+# Include r2d2 configuration for repos in ~/r2d2/
+[includeIf "gitdir:~/repos/r2d2/"]
+	path = ~/.config/git/r2d2_config
+
+[core]
+	whiteSpace = error
+
+[init]
+	defaultBranch = main
+
+[status]
+	branch = true
+	short = true
+	showStash = true
+	showUntrackedFiles = all  # show individual untracked files
+
+[credential]
+	credentialStore = secretservice
+	helper = /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret
