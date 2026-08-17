@@ -27,8 +27,10 @@ setopt AUTOCD
 setopt NOBEEP
 setopt NUMERIC_GLOB_SORT  # sort file10 after file9, not after file1
 
-# Smart directory navigation
-# =========================================================
+# Homebrew
+if [[ -x /opt/homebrew/bin/brew ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv zsh)"
+fi
 
 # Initialize zoxide
 eval "$(zoxide init zsh)"
