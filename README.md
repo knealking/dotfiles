@@ -1,5 +1,37 @@
 # Dotfiles
 
+## Dependencies
+
+- zsh
+- neovim
+- eza
+- bat
+- fd
+- fzf
+- zoxide
+- starship
+- ripgrep
+
+```bash
+ln -s $(which batcat) ~/.local/bin/bat
+ln -s $(which fdfind) ~/.local/bin/fd
+```
+
+Note: Ubuntu installs bat and fd under different names — symlink them so everything works
+
+### Set zsh as your default shell
+
+```sh
+chsh -s $(which zsh)
+```
+
+### Create required directories
+
+```sh
+mkdir -p ~/.local/state/zsh   # history
+mkdir -p ~/.cache/zsh         # completion cache
+```
+
 ## Setup
 
 Run dependencies setup script:
