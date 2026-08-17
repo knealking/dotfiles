@@ -6,5 +6,4 @@
 	sslVerify = false
 
 [commit]
-    gpgsign = false
-
+	gpgsign = false

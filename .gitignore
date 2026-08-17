@@ -4,6 +4,11 @@ __pycache__/
 
 # OS Files
 .DS_Store
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
 # Build Directories
 build/
@@ -25,3 +30,8 @@ obj/
 # Editor Files
 .vscode/
 .idea/
+.copilot/ide
+lazy-lock.json
+
+# Artifacts
+.zcompdump

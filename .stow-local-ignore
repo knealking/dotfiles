@@ -1,8 +1,13 @@
 .git
+.venv
+.mypy_cache/
+.gitignore
 .stow-local-ignore
-.config/nvim/lazy-lock.json
-
-installer.sh
+.zcompdump
+.config/zsh/plugins/
+.mypy_cache
+__pycache__
 setup.sh
-apps.txt
+utils.sh
+dotmate.py
 README.md
