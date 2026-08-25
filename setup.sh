@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh -e
 
 DEBIAN_DEPS="build-essential git zsh curl wget python3 python3-venv eza bat fd-find fzf ripgrep tmux libssl-dev"
 ARCH_DEPS="base-devel git zsh stow curl eza bat fd fzf ripgrep"
