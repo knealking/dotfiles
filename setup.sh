@@ -11,11 +11,15 @@ ALPINE_DEPS="build-base git zsh stow curl exa bat fd-find fzf ripgrep"
 MACOS_DEPS="xcode-select"
 
 error() {
-    printf "${RED}%s{NC}\n" "$1"
+    printf "${RED}[!] %s${NC}\n" "$1"
+}
+
+success() {
+    printf "${GREEN}[+] %s${NC}\n" "$1"
 }
 
 info() {
-    printf "${GREEN}%s${NC}\n" "$1"
+    printf "[i] %s\n" "$1"
 }
 
 # Detect Linux distribution family
@@ -59,7 +63,7 @@ detect_distro() {
             ;;
     esac
 
-    info "Detected distro: $DISTRO_ID (family: $DISTRO_FAMILY)"
+    success "Detected distro: $DISTRO_ID (family: $DISTRO_FAMILY)"
 }
 
 pkg_update() {
@@ -101,7 +105,7 @@ install_build_deps() {
 }
 
 confirm() {
-    printf "%s [Y/n] " "$1"
+    printf "${GREEN}%s${NC} [Y/n] " "$1"
     read -r answer
     case "$answer" in
         [nN]|[nN][oO]) return 1 ;;
@@ -128,11 +132,13 @@ detect_distro
 if confirm "Update system packages?"; then
     info "Updating system packages..."
     pkg_update
+    success "Update successful"
 fi
 
 if confirm "Install dependencies? ($(deps_for_distro))"; then
     info "Installing dependencies..."
     install_build_deps
+    success "Dependencies installation successful"
 fi
 
 if confirm "Install Nerd Fonts?"; then
@@ -142,16 +148,19 @@ if confirm "Install Nerd Fonts?"; then
     unzip ./JetBrainsMono.zip -d ~/.local/share/fonts/JetBrainsMono
     rm ./JetBrainsMono.zip
     fc-cache -fv
+    success "Fonts installation successful"
 fi
 
 if confirm "Configure zsh to use the dotfiles directory?"; then
     info "Configuring zsh..."
     configure_zsh
+    success "Zsh configuration successful"
 fi
 
 if confirm "Link dotfiles to home directory?"; then
     info "Linking dotfiles..."
     ./dotmate.py
+    success "Linking dotfiles successful"
 fi
 
-info "Setup complete!"
+success "Setup successful!"
