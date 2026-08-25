@@ -5,13 +5,13 @@
 stable:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/knealking/dotfiles/main/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/knealking/dotfiles/main/setup.sh | sh
 ```
 
 dev:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/knealking/dotfiles/dev/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/knealking/dotfiles/dev/setup.sh | sh
 ```
 
 ## Dependencies
