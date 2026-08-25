@@ -1,5 +1,19 @@
 # Dotfiles
 
+## Quickstart
+
+stable:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/knealking/dotfiles/main/setup.sh | bash
+```
+
+dev:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/knealking/dotfiles/dev/setup.sh | bash
+```
+
 ## Dependencies
 
 - zsh
