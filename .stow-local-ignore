@@ -1,7 +1,5 @@
 .git
-<<<<<<< HEAD
 .stow-local-ignore
-=======
 .venv
 .mypy_cache/
 .gitignore
@@ -16,4 +14,3 @@ dotmate.py
 README.md
 apps.txt
 installer.sh
->>>>>>> macos

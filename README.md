@@ -1,35 +1,23 @@
 # Dotfiles
 
-## Dependencies
+## Quickstart
 
-- zsh
-- neovim
-- eza
-- bat
-- fd
-- fzf
-- zoxide
-- starship
-- ripgrep
+stable:
 
 ```bash
-ln -s $(which batcat) ~/.local/bin/bat
-ln -s $(which fdfind) ~/.local/bin/fd
+curl -fsSL https://raw.githubusercontent.com/knealking/dotfiles/main/setup.sh | sh
 ```
 
-Note: Ubuntu installs bat and fd under different names — symlink them so everything works
+dev:
 
-### Set zsh as your default shell
+```bash
+curl -fsSL https://raw.githubusercontent.com/knealking/dotfiles/dev/setup.sh | sh
+```
+
+## Set zsh as your default shell
 
 ```sh
 chsh -s $(which zsh)
-```
-
-### Create required directories
-
-```sh
-mkdir -p ~/.local/state/zsh   # history
-mkdir -p ~/.cache/zsh         # completion cache
 ```
 
 ## Setup
