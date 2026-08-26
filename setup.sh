@@ -25,7 +25,7 @@ info() {
 # Detect Linux distribution family
 detect_distro() {
     if [ ! -f /etc/os-release ]; then
-        echo "Error: /etc/os-release not found. Cannot detect distro."
+        error "Error: /etc/os-release not found. Cannot detect distro."
         exit 1
     fi
 
@@ -101,7 +101,7 @@ deps_for_distro() {
 }
 
 install_build_deps() {
-    pkg_install $(deps_for_distro)
+    pkg_install "$(deps_for_distro)"
 }
 
 confirm() {
@@ -114,8 +114,8 @@ confirm() {
 }
 
 configure_zsh() {
-    ln -s $(which batcat) ~/.local/bin/bat
-    ln -s $(which fdfind) ~/.local/bin/fd
+    ln -s "$(which batcat)" "$HOME/.local/bin/bat"
+    ln -s "$(which fdfind)" "$HOME/.local/bin/fd"
 
     mkdir -p "$HOME/.cache/zsh" "$HOME/.local/state/zsh"
     sudo tee -a /etc/zsh/zshenv >/dev/null <<'EOF'
