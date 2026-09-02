@@ -1,6 +1,5 @@
 # Config:
-# Plugins:      fast-syntax-highlighting, zsh-autosuggestions,
-#               zsh-history-substring-search, zsh-vi-mode
+# Plugins:      fast-syntax-highlighting, zsh-autosuggestions
 # Prompt:       starship
 # Navigation:   zoxide, fzf, fd
 # CLI tools:    eza, bat, nvim, ripgrep
@@ -27,13 +26,22 @@ setopt AUTOCD
 setopt NOBEEP
 setopt NUMERIC_GLOB_SORT  # sort file10 after file9, not after file1
 
+# Prompt/theme
+source "$ZDOTDIR/prompt.zsh"
+
+# Initialize zoxide
+eval "$(zoxide init zsh)"
+
+# Aliases
+source "$ZDOTDIR/aliases.zsh"
+
+# # Custom keybindings
+# source "$ZDOTDIR/bindings.zsh"
+
 # Homebrew
 if [[ -x /opt/homebrew/bin/brew ]]; then
   eval "$(/opt/homebrew/bin/brew shellenv zsh)"
 fi
-
-# Initialize zoxide
-eval "$(zoxide init zsh)"
 
 # Completion
 # =========================================================
@@ -78,18 +86,8 @@ fi
 # fzf configuration
 source "$ZDOTDIR/fzf.zsh"
 
-# Aliases
-source "$ZDOTDIR/aliases.zsh"
-
-# Custom keybindings
-source "$ZDOTDIR/bindings.zsh"
-
 # Plugins and plugin manager
 source "$ZDOTDIR/plugins.zsh"
-
-# Prompt/theme
-source "$ZDOTDIR/prompt.zsh"
-
 
 # Node / NVM
 # =========================================================
