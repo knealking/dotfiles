@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/bash -e
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -80,7 +80,7 @@ pkg_update() {
 
 pkg_install() {
     case "$DISTRO_FAMILY" in
-        debian)   sudo apt install -y "$@" ;;
+        debian)   sudo apt-get install -y "$@" ;;
         macos)    brew install "$@" ;;
         arch)     sudo pacman -S --noconfirm "$@" ;;
         fedora)   sudo dnf install -y "$@" ;;
@@ -101,11 +101,11 @@ deps_for_distro() {
 }
 
 install_build_deps() {
-    pkg_install "$(deps_for_distro)"
+    pkg_install $(deps_for_distro)
 }
 
 confirm() {
-    printf "${GREEN}%s${NC} [Y/n] " "$1"
+    printf "%s [Y/n] " "$1"
     read -r answer
     case "$answer" in
         [nN]|[nN][oO]) return 1 ;;
