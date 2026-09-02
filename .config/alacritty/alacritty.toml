@@ -10,7 +10,7 @@ lines = 30
 size = 12
 
 [font.normal]
-family = "JetBrainsMono Nerd Font"
+family = "MesloLGL Nerd Font"
 
 [general]
 import = ["~/.config/alacritty/themes/themes/catppuccin_mocha.toml"]
