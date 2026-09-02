@@ -10,9 +10,6 @@ alias la='eza -lah --icons --git'
 # Tree view
 alias tree='eza --tree --icons'
 
-# Reuse ls completions for eza (avoids defining a separate completion function)
-compdef eza=ls
-
 # Better cat
 alias cat='bat'
 
@@ -25,6 +22,8 @@ alias df='df -h'
 alias -- -='cd -'  # -- prevents - being parsed as a flag; cd - jumps to previous directory
 
 # Git
+alias gcm='git commit -m'
+alias gp='git push'
 alias glog='PAGER="less -F -X" git log'                              # -F quit if one screen, -X no clear on exit
 alias gadog='PAGER="less -F -X" git log --all --decorate --oneline --graph'
 alias dotfiles='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
