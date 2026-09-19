@@ -114,6 +114,7 @@ confirm() {
 }
 
 configure_zsh() {
+    mkdir -p $HOME/.local/bin
     ln -s "$(which batcat)" "$HOME/.local/bin/bat"
     ln -s "$(which fdfind)" "$HOME/.local/bin/fd"
 
@@ -122,6 +123,19 @@ configure_zsh() {
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 EOF
+
+    curl -sS https://starship.rs/install.sh | sh
+}
+
+configure_cac() {
+    mkdir -p $HOME/.pki/nssbd
+    certutil -N -d sql:$HOME/.pki/nssdb --empty-password
+
+    curl -fsSL https://raw.githubusercontent.com/jdjaxon/linux_cac/main/cac_setup.sh
+
+    modutil -dbdir sql:$HOME/.pki/nssdb/ \
+        -add "CAC Module" \
+        -libfile /lib/x86_64-linux-gnu/opensc-pkcs11.so
 }
 
 # -------------------------------------------------------
