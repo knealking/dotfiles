@@ -1,5 +1,22 @@
 #!/usr/bin/env bash
 
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
+
+error() {
+    printf "${RED}[!] %s${NC}\n" "$1"
+}
+
+success() {
+    printf "${GREEN}[+] %s${NC}\n" "$1"
+}
+
+info() {
+    printf "[i] %s\n" "$1"
+}
+
 confirm() {
     printf "%s [Y/n] " "$1"
     read -r answer
@@ -13,15 +30,16 @@ confirm() {
 generate_ssh_key() {
     ssh-keygen -t ed25519 -C "$1" -f ~/.ssh/id_ed25519_$1 -N ""
     echo ""
-    echo "--- $1 public key start ---"
+    success "--- $1 public key start ---"
     cat ~/.ssh/id_ed25519_$1.pub
-    echo "--- $1 public key end ---"
+    success "--- $1 public key end ---"
     eval "$(ssh-agent -s)"
+    sleep 1
     ssh-add ~/.ssh/id_ed25519_$1
 }
 
 if confirm "Install Neovim?"; then
-    echo "Installing Neovim..."
+    info "Installing Neovim..."
     sleep 2
     curl -Lo nvim.tar.gz "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz"
     sudo tar -C /usr/local -xzf nvim.tar.gz --strip-components=1
@@ -53,7 +71,7 @@ if confirm "Set up SSH keys?"; then
 fi
 
 if confirm "Install lazygit?"; then
-    echo "Installing lazygit..."
+    info "Installing lazygit..."
     sleep 2
     LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": *"v\K[^"]*')
     curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
@@ -62,7 +80,7 @@ if confirm "Install lazygit?"; then
 fi
 
 if confirm "Install rustup?"; then
-    echo "Installing Rust..."
+    info "Installing Rust..."
     sleep 2
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
     source ~/.bashrc
@@ -70,7 +88,7 @@ if confirm "Install rustup?"; then
 fi
 
 if confirm "Install Yazi?"; then
-    echo "Installing Yazi..."
+    info "Installing Yazi..."
     sleep 2
     git clone https://github.com/sxyazi/yazi.git
     cd yazi
@@ -81,4 +99,3 @@ fi
 if confirm "Install uv?" then
     curl -LsSf https://astral.sh/uv/install.sh | sh
 fi
-
