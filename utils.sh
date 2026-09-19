@@ -77,3 +77,8 @@ if confirm "Install Yazi?"; then
     cargo build --release --locked
     sudo mv target/release/ya target/release/yazi /usr/local/bin/
 fi
+
+if confirm "Install uv?" then
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+fi
+
