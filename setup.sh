@@ -171,10 +171,16 @@ if confirm "Configure zsh to use the dotfiles directory?"; then
     success "Zsh configuration successful"
 fi
 
+if confirm "Configure linux cac?"; then
+    info "Setting up linux cac..."
+    configure_cac
+fi
+
 if confirm "Link dotfiles to home directory?"; then
     info "Linking dotfiles..."
     ./dotmate.py
     success "Linking dotfiles successful"
 fi
+
 
 success "Setup successful!"
