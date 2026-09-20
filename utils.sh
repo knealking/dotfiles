@@ -47,9 +47,7 @@ if confirm "Install Neovim?"; then
 fi
 
 if confirm "Install VSCode?"; then
-    sudo apt install wget gpg &&
-    wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft.gpg
-    sudo apt install wget gpg &&
+    sudo apt install wget gpg
     wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft.gpg
     sudo tee /etc/apt/sources.list.d/vscode.sources << EOF
 Types: deb
@@ -59,8 +57,7 @@ Components: main
 Architectures: amd64,arm64,armhf
 Signed-By: /usr/share/keyrings/microsoft.gpg
 EOF
-    sudo apt update &&
-    sudo apt install code
+    sudo apt update && sudo apt install code
 fi
 
 if confirm "Set up SSH keys?"; then
