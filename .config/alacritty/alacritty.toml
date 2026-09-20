@@ -13,4 +13,4 @@ size = 12
 family = "MesloLGL Nerd Font"
 
 [general]
-import = ["~/.config/alacritty/themes/themes/catppuccin_mocha.toml"]
+import = ["~/.local/state/alacritty/themes/themes/catppuccin_mocha.toml"]
