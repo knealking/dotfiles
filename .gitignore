@@ -33,6 +33,7 @@ obj/
 
 .copilot/ide
 .config/zsh/plugins
+.config/nvim/lazy-lock.json
 
 # Artifacts
 .zcompdump
