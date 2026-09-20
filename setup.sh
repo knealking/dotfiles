@@ -4,11 +4,13 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
-DEBIAN_DEPS="build-essential git zsh curl wget python3 python3-venv eza bat zoxide fd-find fzf ripgrep tmux libssl-dev"
+DEBIAN_DEPS="build-essential git zsh curl wget python3 python3-venv eza bat zoxide fd-find fzf ripgrep tmux libssl-dev alacritty"
 ARCH_DEPS="base-devel git zsh stow curl eza bat fd fzf ripgrep"
 FEDORA_DEPS="@development-tools git zsh stow curl eza bat fd-find fzf ripgrep"
 ALPINE_DEPS="build-base git zsh stow curl exa bat fd-find fzf ripgrep"
 MACOS_DEPS="xcode-select"
+
+ALACRITTY_THEMES=$HOME/.alacritty/themes
 
 error() {
     printf "${RED}[!] %s${NC}\n" "$1"
@@ -127,6 +129,14 @@ EOF
     curl -sS https://starship.rs/install.sh | sh
 }
 
+setup_alacritty() {
+    if [ ! -d $(ALACRITTY_THEMES) ]; then
+        info "Alacritty themes not found. Cloning repository..."
+        mkdir -p $(ALACRITTY_THEMES)
+        git clone --depth=1 https://github.com/alacritty/alacritty-theme $(ALACRITTY_THEMES)
+    fi
+}
+
 configure_cac() {
     mkdir -p $HOME/.pki/nssbd
     certutil -N -d sql:$HOME/.pki/nssdb --empty-password
@@ -164,6 +174,8 @@ if confirm "Install Nerd Fonts?"; then
     fc-cache -fv
     success "Fonts installation successful"
 fi
+
+setup_alacritty
 
 if confirm "Configure zsh to use the dotfiles directory?"; then
     info "Configuring zsh..."
