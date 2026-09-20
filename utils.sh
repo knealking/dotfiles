@@ -13,6 +13,9 @@ main() {
         curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
         sudo tar -C /usr/local/bin -xzf lazygit.tar.gz lazygit
         sudo rm lazygit.tar.gz
+        success "lazygit installed successfully!"
+    else
+        info "lazygit already installed!"
     fi
 
     # install uv
