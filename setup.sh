@@ -17,6 +17,58 @@ STATE="$HOME/.local/state/zsh"
 NSSDB="$HOME/.pki/nssdb"
 ALACRITTY_THEMES="$HOME/.local/state/alacritty/themes"
 
+main() {
+    # Detect distro before doing anything
+    detect_distro
+
+    check_dir "$LOCAL_BIN"
+    check_dir "$ZCACHE"
+    check_dir "$STATE"
+    check_dir "$NSSDB"
+
+
+    info "Updating system packages..."
+    pkg_update
+    success "Update successful"
+
+    info "Installing dependencies..."
+    install_build_deps
+    success "Dependencies installation successful"
+
+    info "Linking utilities..."
+    # ln -sf "$(which batcat)" "$HOME/.local/bin/bat"
+    # ln -sf "$(which fdfind)" "$HOME/.local/bin/fd"
+
+    if confirm "Configure zsh to use the dotfiles directory?"; then
+        info "Configuring zsh..."
+        configure_zsh
+        success "Zsh configuration successful"
+    fi
+
+    # Install alacritty themes
+    if [ ! -d "$ALACRITTY_THEMES" ]; then
+        info "Alacritty themes not found. Cloning repository..."
+        mkdir -p "$ALACRITTY_THEMES"
+        git clone --depth=1 https://github.com/alacritty/alacritty-theme "$ALACRITTY_THEMES"
+    fi
+
+    install_font "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip" "JetBrainsMono"
+    install_font "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Meslo.zip" "Meslo"
+
+    if confirm "Configure linux cac?"; then
+        info "Setting up linux cac..."
+        configure_cac
+    fi
+
+    if confirm "Link dotfiles to home directory?"; then
+        info "Linking dotfiles..."
+        ./dotmate.py
+        success "Linking dotfiles successful"
+    fi
+
+    success "Setup successful!"
+}
+
 error() {
     printf "${RED}[!] %s${NC}\n" "$1"
 }
@@ -169,51 +221,8 @@ configure_cac() {
         -libfile /lib/x86_64-linux-gnu/opensc-pkcs11.so
 }
 
-# main
-# =============================================================================
-# Detect distro before doing anything
-detect_distro
 
-check_dir "$LOCAL_BIN"
-check_dir "$ZCACHE"
-check_dir "$STATE"
-check_dir "$NSSDB"
 
-ln -sf "$(which batcat)" "$HOME/.local/bin/bat"
-ln -sf "$(which fdfind)" "$HOME/.local/bin/fd"
-
-if confirm "Update system packages?"; then
-    info "Updating system packages..."
-    pkg_update
-    success "Update successful"
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    main "$@"
 fi
-
-if confirm "Install dependencies? ($(deps_for_distro))"; then
-    info "Installing dependencies..."
-    install_build_deps
-    success "Dependencies installation successful"
-fi
-
-if confirm "Configure zsh to use the dotfiles directory?"; then
-    info "Configuring zsh..."
-    configure_zsh
-    success "Zsh configuration successful"
-fi
-
-setup_alacritty
-
-install_font "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip" "JetBrainsMono"
-install_font "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Meslo.zip" "Meslo"
-
-if confirm "Configure linux cac?"; then
-    info "Setting up linux cac..."
-    configure_cac
-fi
-
-if confirm "Link dotfiles to home directory?"; then
-    info "Linking dotfiles..."
-    ./dotmate.py
-    success "Linking dotfiles successful"
-fi
-
-success "Setup successful!"
