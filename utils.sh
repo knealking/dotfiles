@@ -1,5 +1,24 @@
 #!/usr/bin/env bash
 
+main {
+
+    # install nvim
+    if []; then
+    fi
+
+    # install vscode
+
+    # install lazygit
+
+    # install uv
+
+    # install rustup
+
+    # install yazi
+
+
+}
+
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -54,6 +73,8 @@ if confirm "Install Yazi?"; then
     sudo mv target/release/ya target/release/yazi /usr/local/bin/
 fi
 
-if confirm "Install uv?" then
+if confirm "Install uv?"; then
     curl -LsSf https://astral.sh/uv/install.sh | sh
 fi
+
+main

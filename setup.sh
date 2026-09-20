@@ -142,7 +142,6 @@ detect_distro() {
 
     . /etc/os-release
     DISTRO_ID="${ID:-unknown}"
-    DISTRO_ID_LIKE="${ID_LIKE:-}"
 
     case "$DISTRO_ID" in
         ubuntu|debian|linuxmint|pop|elementary|zorin|kali|raspbian)
@@ -160,17 +159,8 @@ detect_distro() {
         alpine)
             DISTRO_FAMILY="alpine" ;;
         *)
-            # Fallback using ID_LIKE
-            case "$DISTRO_ID_LIKE" in
-                *debian*|*ubuntu*)  DISTRO_FAMILY="debian" ;;
-                *arch*)             DISTRO_FAMILY="arch" ;;
-                *fedora*|*rhel*)    DISTRO_FAMILY="fedora" ;;
-                *suse*)             DISTRO_FAMILY="opensuse" ;;
-                *)
-                    error "Error: Unsupported distro: $DISTRO_ID"
-                    exit 1
-                    ;;
-            esac
+            error "Error: Unsupported distro: $DISTRO_ID"
+            exit 1
             ;;
     esac
 
@@ -212,17 +202,33 @@ install_build_deps() {
 }
 
 configure_zsh() {
-    sudo tee -a /etc/zsh/zshenv >/dev/null <<'EOF'
+    if [ -z "${XDG_CONFIG_HOME:-}" ]; then
+        sudo tee -a /etc/zsh/zshenv >/dev/null <<'EOF'
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
-export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 EOF
+        export XDG_CONFIG_HOME="$HOME/.config"
+        success "XGD_CONFIG_HOME set!"
+    fi
+    info "XGD_CONFIG_HOME already set"
+
+    if [ -z "${ZDOTDIR:-}" ]; then
+        sudo tee -a /etc/zsh/zshenv >/dev/null <<'EOF'
+export ZDOTDIR="${ZDOTDIR:-$XDG_CONFIG_HOME/zsh}"
+EOF
+        export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
+        success "ZDOTDIR set!"
+    fi
+    info "ZDOTDIR already set"
+
+    info "Default shell to zsh..."
+    chsh -s "$(which zsh)"
 }
 
 install_font() {
     local url="$1"
     local name="$2"
 
-    if confirm "Install $name?"; then
+    if [ ! -d "$FONTS/$name"]; then
         info "Installing $name..."
 
         curl -LO "$url"
@@ -235,25 +241,33 @@ install_font() {
 
         success "$name installation successful"
     fi
+
+    info "$name already installed"
 }
 
-setup_alacritty() {
-    if [ ! -d "$ALACRITTY_THEMES" ]; then
-        info "Alacritty themes not found. Cloning repository..."
-        mkdir -p "$ALACRITTY_THEMES"
-        git clone --depth=1 https://github.com/alacritty/alacritty-theme "$ALACRITTY_THEMES"
-    fi
+# Setup SSH keys
+generate_ssh_key() {
+    ssh-keygen -t ed25519 -C "$1" -f ~/.ssh/id_ed25519_$1 -N ""
+    echo ""
+    success "--- $1 public key start ---"
+    cat ~/.ssh/id_ed25519_$1.pub
+    success "--- $1 public key end ---"
+    eval "$(ssh-agent -s)"
+    sleep 1
+    ssh-add ~/.ssh/id_ed25519_$1
 }
+
+
 
 configure_cac() {
     certutil -N -d sql:$HOME/.pki/nssdb --empty-password
 
     # run jdjaxon/linux_cac script
-    curl -fsSL https://raw.githubusercontent.com/jdjaxon/linux_cac/main/cac_setup.sh
+    curl -fsSL https://raw.githubusercontent.com/jdjaxon/linux_cac/main/cac_setup.sh | sudo bash
 
     modutil -dbdir sql:$HOME/.pki/nssdb/ \
         -add "CAC Module" \
-        -libfile /lib/x86_64-linux-gnu/opensc-pkcs11.so
+        -libfile /usr/lib/x86_64-linux-gnu/opensc-pkcs11.so
 }
 
 
