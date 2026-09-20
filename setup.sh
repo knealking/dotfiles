@@ -39,13 +39,12 @@ main() {
     # ln -sf "$(which batcat)" "$HOME/.local/bin/bat"
     # ln -sf "$(which fdfind)" "$HOME/.local/bin/fd"
 
-    if confirm "Configure zsh to use the dotfiles directory?"; then
-        info "Configuring zsh..."
-        configure_zsh
-        success "Zsh configuration successful"
-    fi
+    info "Configuring zsh..."
+    configure_zsh
+    success "Zsh configuration successful"
 
     # Install alacritty themes
+    info "Checking alacritty themes..."
     if [ ! -d "$ALACRITTY_THEMES" ]; then
         info "Alacritty themes not found. Cloning repository..."
         mkdir -p "$ALACRITTY_THEMES"
@@ -55,14 +54,50 @@ main() {
     install_font "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip" "JetBrainsMono"
     install_font "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Meslo.zip" "Meslo"
 
+    # Install nvim
+    if [ ! -f /usr/local/bin/nvim ]; then
+        info "Installing Neovim..."
+        sleep 2
+        curl -Lo nvim.tar.gz "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz"
+        sudo tar -C /usr/local -xzf nvim.tar.gz --strip-components=1
+        sudo rm nvim.tar.gz
+        success "Neovim installed successfully!"
+    fi
+    info "Neovim already installed!"
+
+    # Install Vscode
+    if [ ! -f /usr/bin/code]; then
+        sudo apt install wget gpg
+        wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft.gpg
+        sudo tee /etc/apt/sources.list.d/vscode.sources << EOF
+Types: deb
+URIs: https://packages.microsoft.com/repos/code
+Suites: stable
+Components: main
+Architectures: amd64,arm64,armhf
+Signed-By: /usr/share/keyrings/microsoft.gpg
+EOF
+        sudo apt update && sudo apt install code
+        success "Installed VScode successfully!"
+    fi
+    info "VScode already installed!"
+
     if confirm "Configure linux cac?"; then
         info "Setting up linux cac..."
         configure_cac
     fi
 
+    if confirm "Set up SSH keys?"; then
+        mkdir -p ~/.ssh
+        chmod 700 ~/.ssh
+        generate_ssh_key "github"
+        generate_ssh_key "gitlab"
+    fi
+
     if confirm "Link dotfiles to home directory?"; then
         info "Linking dotfiles..."
-        ./dotmate.py
+        git clone --depth=1 https://github.com/knealking/dotfiles.git ~/dotfiles
+        cd dotfiles && ./dotmate.py
         success "Linking dotfiles successful"
     fi
 

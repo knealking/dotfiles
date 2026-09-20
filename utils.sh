@@ -26,46 +26,7 @@ confirm() {
     esac
 }
 
-# Setup SSH keys
-generate_ssh_key() {
-    ssh-keygen -t ed25519 -C "$1" -f ~/.ssh/id_ed25519_$1 -N ""
-    echo ""
-    success "--- $1 public key start ---"
-    cat ~/.ssh/id_ed25519_$1.pub
-    success "--- $1 public key end ---"
-    eval "$(ssh-agent -s)"
-    sleep 1
-    ssh-add ~/.ssh/id_ed25519_$1
-}
 
-if confirm "Install Neovim?"; then
-    info "Installing Neovim..."
-    sleep 2
-    curl -Lo nvim.tar.gz "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz"
-    sudo tar -C /usr/local -xzf nvim.tar.gz --strip-components=1
-    sudo rm nvim.tar.gz
-fi
-
-if confirm "Install VSCode?"; then
-    sudo apt install wget gpg
-    wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft.gpg
-    sudo tee /etc/apt/sources.list.d/vscode.sources << EOF
-Types: deb
-URIs: https://packages.microsoft.com/repos/code
-Suites: stable
-Components: main
-Architectures: amd64,arm64,armhf
-Signed-By: /usr/share/keyrings/microsoft.gpg
-EOF
-    sudo apt update && sudo apt install code
-fi
-
-if confirm "Set up SSH keys?"; then
-    mkdir -p ~/.ssh
-    chmod 700 ~/.ssh
-    generate_ssh_key "github"
-    generate_ssh_key "gitlab"
-fi
 
 if confirm "Install lazygit?"; then
     info "Installing lazygit..."
