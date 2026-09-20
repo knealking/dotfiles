@@ -26,11 +26,12 @@ main() {
     check_dir "$STATE"
     check_dir "$NSSDB"
 
-
+    # Update system
     info "Updating system packages..."
     pkg_update
     success "Update successful"
 
+    # Install defined packages
     info "Installing dependencies..."
     install_build_deps
     success "Dependencies installation successful"
@@ -49,7 +50,10 @@ main() {
         info "Alacritty themes not found. Cloning repository..."
         mkdir -p "$ALACRITTY_THEMES"
         git clone --depth=1 https://github.com/alacritty/alacritty-theme "$ALACRITTY_THEMES"
+    else
+        info "Alacritty themes already exist!"
     fi
+
 
     install_font "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip" "JetBrainsMono"
     install_font "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Meslo.zip" "Meslo"
@@ -66,7 +70,7 @@ main() {
     info "Neovim already installed!"
 
     # Install Vscode
-    if [ ! -f /usr/bin/code]; then
+    if [ ! -f /usr/bin/code ]; then
         sudo apt install wget gpg
         wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft.gpg
         sudo tee /etc/apt/sources.list.d/vscode.sources << EOF
@@ -129,8 +133,9 @@ check_dir () {
     if [ ! -d "$1" ]; then
         info "Creating dir $1..."
         mkdir -p -- "$1"
+    else
+        info "$1 exists"
     fi
-    info "$1 exists"
 }
 
 # Detect Linux distribution family
@@ -207,18 +212,20 @@ configure_zsh() {
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 EOF
         export XDG_CONFIG_HOME="$HOME/.config"
-        success "XGD_CONFIG_HOME set!"
+        success "XGD_CONFIG_HOME set successfully!"
+    else
+        info "XGD_CONFIG_HOME already set!"
     fi
-    info "XGD_CONFIG_HOME already set"
 
     if [ -z "${ZDOTDIR:-}" ]; then
         sudo tee -a /etc/zsh/zshenv >/dev/null <<'EOF'
 export ZDOTDIR="${ZDOTDIR:-$XDG_CONFIG_HOME/zsh}"
 EOF
         export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
-        success "ZDOTDIR set!"
+        success "ZDOTDIR set successfully!"
+    else
+        info "ZDOTDIR already set!"
     fi
-    info "ZDOTDIR already set"
 
     info "Default shell to zsh..."
     chsh -s "$(which zsh)"
@@ -228,7 +235,7 @@ install_font() {
     local url="$1"
     local name="$2"
 
-    if [ ! -d "$FONTS/$name"]; then
+    if [ ! -d "$FONTS/$name" ]; then
         info "Installing $name..."
 
         curl -LO "$url"
@@ -240,9 +247,9 @@ install_font() {
         fc-cache -fv
 
         success "$name installation successful"
+    else
+        info "$name already installed"
     fi
-
-    info "$name already installed"
 }
 
 # Setup SSH keys
@@ -257,8 +264,6 @@ generate_ssh_key() {
     ssh-add ~/.ssh/id_ed25519_$1
 }
 
-
-
 configure_cac() {
     certutil -N -d sql:$HOME/.pki/nssdb --empty-password
 
@@ -269,8 +274,6 @@ configure_cac() {
         -add "CAC Module" \
         -libfile /usr/lib/x86_64-linux-gnu/opensc-pkcs11.so
 }
-
-
 
 if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
     main "$@"
