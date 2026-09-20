@@ -10,7 +10,12 @@ FEDORA_DEPS="@development-tools git zsh stow curl eza bat fd-find fzf ripgrep"
 ALPINE_DEPS="build-base git zsh stow curl exa bat fd-find fzf ripgrep"
 MACOS_DEPS="xcode-select"
 
-ALACRITTY_THEMES=$HOME/.alacritty/themes
+LOCAL_BIN="$HOME/.local/bin"
+ZCACHE="$HOME/.cache/zsh"
+FONTS="$HOME/.local/share/fonts"
+STATE="$HOME/.local/state/zsh"
+NSSDB="$HOME/.pki/nssdb"
+ALACRITTY_THEMES="$HOME/.local/state/alacritty/themes"
 
 error() {
     printf "${RED}[!] %s${NC}\n" "$1"
@@ -22,6 +27,23 @@ success() {
 
 info() {
     printf "[i] %s\n" "$1"
+}
+
+confirm() {
+    printf "%s [Y/n] " "$1"
+    read -r answer
+    case "$answer" in
+        [nN]|[nN][oO]) return 1 ;;
+        *) return 0 ;;
+    esac
+}
+
+check_dir () {
+    if [ ! -d "$1" ]; then
+        info "Creating dir $1..."
+        mkdir -p -- "$1"
+    fi
+    info "$1 exists"
 }
 
 # Detect Linux distribution family
@@ -40,7 +62,7 @@ detect_distro() {
             DISTRO_FAMILY="debian" ;;
         darwin)
             DISTRO_FAMILY="macos" ;;
-        arch|manjaro|endeavouros|garuda|artix)
+        arch|cachyos|manjaro|endeavouros|garuda|artix)
             DISTRO_FAMILY="arch" ;;
         fedora)
             DISTRO_FAMILY="fedora" ;;
@@ -73,8 +95,6 @@ pkg_update() {
         debian)   sudo apt update && sudo apt upgrade -y ;;
         arch)     sudo pacman -Syu --noconfirm ;;
         fedora)   sudo dnf upgrade -y ;;
-        rhel)     sudo dnf upgrade -y ;;
-        opensuse) sudo zypper refresh && sudo zypper update -y ;;
         alpine)   sudo apk update && sudo apk upgrade ;;
         macos)    brew update && brew upgrade ;;
     esac
@@ -86,8 +106,6 @@ pkg_install() {
         macos)    brew install "$@" ;;
         arch)     sudo pacman -S --noconfirm "$@" ;;
         fedora)   sudo dnf install -y "$@" ;;
-        rhel)     sudo dnf install -y "$@" ;;
-        opensuse) sudo zypper install -y "$@" ;;
         alpine)   sudo apk add "$@" ;;
     esac
 }
@@ -106,41 +124,44 @@ install_build_deps() {
     pkg_install $(deps_for_distro)
 }
 
-confirm() {
-    printf "%s [Y/n] " "$1"
-    read -r answer
-    case "$answer" in
-        [nN]|[nN][oO]) return 1 ;;
-        *) return 0 ;;
-    esac
-}
-
 configure_zsh() {
-    mkdir -p $HOME/.local/bin
-    ln -s "$(which batcat)" "$HOME/.local/bin/bat"
-    ln -s "$(which fdfind)" "$HOME/.local/bin/fd"
-
-    mkdir -p "$HOME/.cache/zsh" "$HOME/.local/state/zsh"
     sudo tee -a /etc/zsh/zshenv >/dev/null <<'EOF'
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 EOF
+}
 
-    curl -sS https://starship.rs/install.sh | sh
+install_font() {
+    local url="$1"
+    local name="$2"
+
+    if confirm "Install $name?"; then
+        info "Installing $name..."
+
+        curl -LO "$url"
+
+        mkdir -p "$FONTS/$name"
+        unzip "./${url##*/}" -d "$FONTS/$name"
+        rm "./${url##*/}"
+
+        fc-cache -fv
+
+        success "$name installation successful"
+    fi
 }
 
 setup_alacritty() {
-    if [ ! -d $(ALACRITTY_THEMES) ]; then
+    if [ ! -d "$ALACRITTY_THEMES" ]; then
         info "Alacritty themes not found. Cloning repository..."
-        mkdir -p $(ALACRITTY_THEMES)
-        git clone --depth=1 https://github.com/alacritty/alacritty-theme $(ALACRITTY_THEMES)
+        mkdir -p "$ALACRITTY_THEMES"
+        git clone --depth=1 https://github.com/alacritty/alacritty-theme "$ALACRITTY_THEMES"
     fi
 }
 
 configure_cac() {
-    mkdir -p $HOME/.pki/nssbd
     certutil -N -d sql:$HOME/.pki/nssdb --empty-password
 
+    # run jdjaxon/linux_cac script
     curl -fsSL https://raw.githubusercontent.com/jdjaxon/linux_cac/main/cac_setup.sh
 
     modutil -dbdir sql:$HOME/.pki/nssdb/ \
@@ -148,10 +169,18 @@ configure_cac() {
         -libfile /lib/x86_64-linux-gnu/opensc-pkcs11.so
 }
 
-# -------------------------------------------------------
-
+# main
+# =============================================================================
 # Detect distro before doing anything
 detect_distro
+
+check_dir "$LOCAL_BIN"
+check_dir "$ZCACHE"
+check_dir "$STATE"
+check_dir "$NSSDB"
+
+ln -sf "$(which batcat)" "$HOME/.local/bin/bat"
+ln -sf "$(which fdfind)" "$HOME/.local/bin/fd"
 
 if confirm "Update system packages?"; then
     info "Updating system packages..."
@@ -165,23 +194,16 @@ if confirm "Install dependencies? ($(deps_for_distro))"; then
     success "Dependencies installation successful"
 fi
 
-if confirm "Install Nerd Fonts?"; then
-    info "Installing Nerd Fonts..."
-    curl -Lo JetBrainsMono.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/JetBrainsMono.zip
-    mkdir -p ~/.local/share/fonts/JetBrainsMono
-    unzip ./JetBrainsMono.zip -d ~/.local/share/fonts/JetBrainsMono
-    rm ./JetBrainsMono.zip
-    fc-cache -fv
-    success "Fonts installation successful"
-fi
-
-setup_alacritty
-
 if confirm "Configure zsh to use the dotfiles directory?"; then
     info "Configuring zsh..."
     configure_zsh
     success "Zsh configuration successful"
 fi
+
+setup_alacritty
+
+install_font "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip" "JetBrainsMono"
+install_font "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Meslo.zip" "Meslo"
 
 if confirm "Configure linux cac?"; then
     info "Setting up linux cac..."
@@ -193,6 +215,5 @@ if confirm "Link dotfiles to home directory?"; then
     ./dotmate.py
     success "Linking dotfiles successful"
 fi
-
 
 success "Setup successful!"
