@@ -1,4 +1,11 @@
-#!/bin/bash -e
+#!/bin/sh
+
+# if [ -z "${BASH_VERSION:-}" ]; then
+#     printf '%s\n' 'This installer requires Bash. Download it and run: bash install.sh' >&2
+#     exit 1
+# fi
+
+set -e
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
