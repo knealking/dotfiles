@@ -5,13 +5,13 @@
 stable:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/knealking/dotfiles/main/setup.sh | sh
+curl -fsSL https://raw.githubusercontent.com/knealking/dotfiles/main/install.sh | sh
 ```
 
 dev:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/knealking/dotfiles/dev/setup.sh | sh
+curl -fsSL https://raw.githubusercontent.com/knealking/dotfiles/dev/install.sh | sh
 ```
 
 ## Set zsh as your default shell

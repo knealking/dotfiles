@@ -275,6 +275,4 @@ configure_cac() {
         -libfile /usr/lib/x86_64-linux-gnu/opensc-pkcs11.so
 }
 
-if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
-    main "$@"
-fi
+main
