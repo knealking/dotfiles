@@ -102,6 +102,39 @@ main() {
         generate_ssh_key "gitlab"
     fi
 
+    # install uv
+    if [ ! -f "$HOME/.local/bin/uv" ]; then
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        success "uv installed successfully!"
+    else
+        info "uv already installed!"
+    fi
+
+    # install rustup
+    if [ ! -f "$HOME/.cargo/bin/rustup" ]; then
+        info "Installing Rust..."
+        sleep 2
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+        source ~/.bashrc
+        rustup update
+
+        success "rustup installed successfully!"
+    else
+        info "rustup already installed!"
+    fi
+
+    # install yazi
+    if [ ! -f "/usr/local/bin/yazi" ]; then
+        info "Installing Yazi..."
+        curl -fsSL https://yazi-rs.github.io/builds/yazi-keyring.gpg | sudo tee /usr/share/keyrings/yazi-keyring.gpg >/dev/null
+        echo 'deb [signed-by=/usr/share/keyrings/yazi-keyring.gpg] https://yazi-rs.github.io/builds/ stable main' | sudo tee /etc/apt/sources.list.d/yazi.list >/dev/null
+        sudo apt update && sudo apt install yazi
+
+        success "yazi installed successfully!"
+    else
+        info "yazi already installed!"
+    fi
+
     if confirm "Link dotfiles to home directory?"; then
         info "Linking dotfiles..."
         git clone --depth=1 https://github.com/knealking/dotfiles.git ~/dotfiles
