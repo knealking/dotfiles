@@ -81,20 +81,14 @@ main() {
 
     # Install Vscode
     if [ ! -f /usr/bin/code ]; then
-        sudo apt install wget gpg
-        wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft.gpg
-        sudo tee /etc/apt/sources.list.d/vscode.sources << EOF
-Types: deb
-URIs: https://packages.microsoft.com/repos/code
-Suites: stable
-Components: main
-Architectures: amd64,arm64,armhf
-Signed-By: /usr/share/keyrings/microsoft.gpg
-EOF
+        curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft.gpg
+        echo 'deb [arch=amd64,arm64,armhf signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/code stable main' | sudo tee /etc/apt/sources.list.d/vscode.list >/dev/null
+
         sudo apt update && sudo apt install code
         success "Installed VScode successfully!"
+    else
+        info "VScode already installed!"
     fi
-    info "VScode already installed!"
 
     if confirm "Configure linux cac?"; then
         info "Setting up linux cac..."
