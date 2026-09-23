@@ -11,11 +11,14 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
-DEBIAN_DEPS="build-essential git zsh curl wget python3 python3-venv eza bat zoxide fd-find fzf ripgrep tmux libssl-dev alacritty"
+DEBIAN_DEPS="build-essential git lazygit zsh curl wget python3 python3-venv eza \
+    bat zoxide fd-find fzf ripgrep tmux libssl-dev alacritty"
+
+MACOS_DEPS="xcode-select"
+
 ARCH_DEPS="base-devel git zsh stow curl eza bat fd fzf ripgrep"
 FEDORA_DEPS="@development-tools git zsh stow curl eza bat fd-find fzf ripgrep"
 ALPINE_DEPS="build-base git zsh stow curl exa bat fd-find fzf ripgrep"
-MACOS_DEPS="xcode-select"
 
 LOCAL_BIN="$HOME/.local/bin"
 ZCACHE="$HOME/.cache/zsh"
