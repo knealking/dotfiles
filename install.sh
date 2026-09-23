@@ -245,20 +245,18 @@ install_build_deps() {
 
 configure_zsh() {
     if [ -z "${XDG_CONFIG_HOME:-}" ]; then
-        sudo tee -a /etc/zsh/zshenv >/dev/null <<'EOF'
-export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
-EOF
+        echo 'export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"' | sudo tee -a /etc/zsh/zshenv >/dev/null
         export XDG_CONFIG_HOME="$HOME/.config"
+
         success "XGD_CONFIG_HOME set successfully!"
     else
         info "XGD_CONFIG_HOME already set!"
     fi
 
     if [ -z "${ZDOTDIR:-}" ]; then
-        sudo tee -a /etc/zsh/zshenv >/dev/null <<'EOF'
-export ZDOTDIR="${ZDOTDIR:-$XDG_CONFIG_HOME/zsh}"
-EOF
+        echo 'export ZDOTDIR="${XDG_CONFIG_HOME:-$HOME/.config}/zsh"' | sudo tee -a /etc/zsh/zshenv >/dev/null
         export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
+
         success "ZDOTDIR set successfully!"
     else
         info "ZDOTDIR already set!"
@@ -274,13 +272,10 @@ install_font() {
 
     if [ ! -d "$FONTS/$name" ]; then
         info "Installing $name..."
-
         curl -LO "$url"
-
         mkdir -p "$FONTS/$name"
         unzip "./${url##*/}" -d "$FONTS/$name"
         rm "./${url##*/}"
-
         fc-cache -fv
 
         success "$name installation successful"
@@ -292,10 +287,10 @@ install_font() {
 # Setup SSH keys
 generate_ssh_key() {
     ssh-keygen -t ed25519 -C "$1" -f ~/.ssh/id_ed25519_$1 -N ""
-    echo ""
     success "--- $1 public key start ---"
     cat ~/.ssh/id_ed25519_$1.pub
     success "--- $1 public key end ---"
+
     eval "$(ssh-agent -s)"
     sleep 1
     ssh-add ~/.ssh/id_ed25519_$1
