@@ -1,1 +1,1 @@
-source ~/pwndbg/gdbinit.py
+source $(uv tool dir)/pwndbg/share/pwndbg/gdbinit.py
