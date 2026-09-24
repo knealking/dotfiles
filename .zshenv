@@ -10,7 +10,6 @@ export XDG_STATE_HOME="$HOME/.local/state"
 # ---------- Editor ----------
 # Default editor used by git, crontab, etc.
 export EDITOR="nvim"
-export VISUAL="nvim"
 
 # ---------- Pager ----------
 if command -v bat >/dev/null 2>&1; then
@@ -24,9 +23,6 @@ fi
 
 # ---------- GPG ----------
 export GPG_TTY=$(tty)
-
-# ---------- Starship ----------
-export STARSHIP_CONFIG="$ZDOTDIR/starship.toml"
 
 # ---------- PATH ----------
 # Personal binaries/scripts

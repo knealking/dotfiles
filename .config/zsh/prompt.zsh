@@ -1,7 +1,7 @@
 # ~/.config/zsh/prompt.zsh
 # Define the target installation directory
 
-PURE_DIR="$ZDOTDIR/pure"
+PURE_DIR="$ZDOTDIR/plugins/pure"
 
 # Auto-clone Pure if it hasn't been cloned yet
 if [ ! -d "$PURE_DIR" ]; then
@@ -13,7 +13,7 @@ fi
 fpath+=("$PURE_DIR")
 
 # .zshrc
-fpath+=($ZDOTDIR/pure)
+fpath+=($PURE_DIR)
 
 autoload -U promptinit; promptinit
 
