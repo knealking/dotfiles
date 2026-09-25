@@ -110,6 +110,14 @@ main() {
         info "uv already installed!"
     fi
 
+    if [ ! -f "$(uv tool dir)/pwndbg/share/pwndbg/gdbinit.py" ]; then
+        uv tool install git+https://github.com/pwndbg/pwndbg
+        echo "source $(uv tool dir)/pwndbg/share/pwndbg/gdbinit.py" >> ~/.gdbinit
+        success "pwndbg installed successfully!"
+    else
+        info "pwndgb already installed!"
+    fi
+
     # install rustup
     if [ ! -f "$HOME/.cargo/bin/rustup" ]; then
         info "Installing Rust..."
