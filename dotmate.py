@@ -39,7 +39,9 @@ OS_TYPE = detect_os()
 
 def get_args():
     """Parse command-line arguments."""
-    parser = argparse.ArgumentParser(description="Manage dotfiles with symlinks.")
+    parser = argparse.ArgumentParser(
+        description="Manage dotfiles with symlinks."
+    )
     parser.add_argument(
         "--source",
         "-s",
@@ -98,7 +100,9 @@ def get_ignore_list(ignore_file: Path):
 
     with open(ignore_file, "r", encoding="utf-8") as file:
         ignore_list = [
-            line.strip() for line in file if line.strip() and not line.startswith("#")
+            line.strip()
+            for line in file
+            if line.strip() and not line.startswith("#")
         ]
     return ignore_list
 
