@@ -29,9 +29,6 @@ setopt NUMERIC_GLOB_SORT  # sort file10 after file9, not after file1
 # Prompt/theme
 source "$ZDOTDIR/prompt.zsh"
 
-# Initialize zoxide
-eval "$(zoxide init zsh)"
-
 # Aliases
 source "$ZDOTDIR/aliases.zsh"
 
