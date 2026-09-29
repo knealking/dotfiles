@@ -2,7 +2,7 @@ HISTFILE="$XDG_STATE_HOME/zsh/history"
 HISTSIZE=100000
 SAVEHIST=100000
 
-ZPLUGINDIR="$$HOME/.local/share/zsh/plugins"
+ZPLUGINDIR="$HOME/.local/share/zsh/plugins"
 PURE_DIR="$ZPLUGINDIR/pure"
 
 setopt APPEND_HISTORY
@@ -123,8 +123,6 @@ zplugin-update() {
 
 _zplugin_load zsh-users zsh-autosuggestions
 _zplugin_load zdharma-continuum fast-syntax-highlighting
-
-alias update-zplug='zplugin-update'
 
 # fzf configuration
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --strip-cwd-prefix'  # strip-cwd-prefix removes the leading ./ from results
