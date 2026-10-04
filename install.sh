@@ -2,12 +2,21 @@
 
 set -e
 
+# Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
-DEBIAN_DEPS="build-essential git lazygit zsh curl wget python3 python3-venv eza \
-    bat zoxide fd-find fzf ripgrep tmux libssl-dev alacritty"
+# Local paths for installation and configuration
+LOCAL_BIN="$HOME/.local/bin"
+DATA_HOME="$HOME/.local/share"
+ZCACHE="$HOME/.cache/zsh"
+STATE="$HOME/.local/state/zsh"
+FONTS="$HOME/.local/share/fonts"
+
+# Distribution-specific dependencies
+DEBIAN_DEPS="zsh git curl wget tmux build-essential gcc clang stow bat fzf \
+    python3 python3-venv ripgrep fd-find eza lazygit alacritty zoxide"
 
 MACOS_DEPS="xcode-select"
 
@@ -15,23 +24,9 @@ ARCH_DEPS="base-devel git zsh stow curl eza bat fd fzf ripgrep"
 FEDORA_DEPS="@development-tools git zsh stow curl eza bat fd-find fzf ripgrep"
 ALPINE_DEPS="build-base git zsh stow curl exa bat fd-find fzf ripgrep"
 
-LOCAL_BIN="$HOME/.local/bin"
-DATA_HOME="$HOME/.local/share"
-ZCACHE="$HOME/.cache/zsh"
-STATE="$HOME/.local/state/zsh"
-
-FONTS="$HOME/.local/share/fonts"
-ALACRITTY_THEMES="$DATA_HOME/alacritty/themes"
-
 main() {
     # Detect distro before doing anything
     detect_distro
-
-    check_dir "$LOCAL_BIN"
-    check_dir "$DATA_HOME"
-    check_dir "$ZCACHE"
-    check_dir "$STATE"
-    check_dir "$NSSDB"
 
     # Update system
     info "Updating system packages..."
@@ -40,27 +35,13 @@ main() {
 
     # Install defined packages
     info "Installing dependencies..."
-    install_build_deps
+    pkg_install $(deps_for_distro)
     success "Dependencies installation successful"
 
     info "Linking utilities..."
-    if command -v batcat >/dev/null 2>&1; then
-        ln -sf "$(which batcat)" "$HOME/.local/bin/bat"
-    fi
-
-    if command -v fdfind >/dev/null 2>&1; then
-        ln -sf "$(which fdfind)" "$HOME/.local/bin/fd"
-    fi
-
-    # Install alacritty themes
-    info "Checking alacritty themes..."
-    if [ ! -d "$ALACRITTY_THEMES" ]; then
-        info "Alacritty themes not found. Cloning repository..."
-        mkdir -p "$ALACRITTY_THEMES"
-        git clone --depth=1 https://github.com/alacritty/alacritty-theme "$ALACRITTY_THEMES"
-    else
-        info "Alacritty themes already exist!"
-    fi
+    mkdir -p "$LOCAL_BIN" "$DATA_HOME" "$ZCACHE" "$STATE" "$FONTS"
+    link_command batcat bat
+    link_command fdfind fd
 
     # Install fonts
     install_font "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip" "JetBrainsMono"
@@ -69,23 +50,12 @@ main() {
     # Install nvim
     if [ ! -f /usr/local/bin/nvim ]; then
         info "Installing Neovim..."
-        sleep 2
         curl -Lo nvim.tar.gz "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz"
         sudo tar -C /usr/local -xzf nvim.tar.gz --strip-components=1
-        sudo rm nvim.tar.gz
+        rm nvim.tar.gz
         success "Neovim installed successfully!"
-    fi
-    info "Neovim already installed!"
-
-    # Install Vscode
-    if [ ! -f /usr/bin/code ]; then
-        curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft.gpg
-        echo 'deb [arch=amd64,arm64,armhf signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/code stable main' | sudo tee /etc/apt/sources.list.d/vscode.list >/dev/null
-
-        sudo apt update && sudo apt install code
-        success "Installed VScode successfully!"
     else
-        info "VScode already installed!"
+        info "Neovim already installed!"
     fi
 
     # install uv
@@ -104,28 +74,11 @@ main() {
         info "pwndgb already installed!"
     fi
 
-    # install yazi
-    if [ ! -f "/usr/local/bin/yazi" ]; then
-        info "Installing Yazi..."
-        curl -fsSL https://yazi-rs.github.io/builds/yazi-keyring.gpg | sudo tee /usr/share/keyrings/yazi-keyring.gpg >/dev/null
-        echo 'deb [signed-by=/usr/share/keyrings/yazi-keyring.gpg] https://yazi-rs.github.io/builds/ stable main' | sudo tee /etc/apt/sources.list.d/yazi.list >/dev/null
-        sudo apt update && sudo apt install yazi
-
-        success "yazi installed successfully!"
-    else
-        info "yazi already installed!"
-    fi
-
     if confirm "Set up SSH keys?"; then
         mkdir -p ~/.ssh
         chmod 700 ~/.ssh
         generate_ssh_key "github"
         generate_ssh_key "gitlab"
-    fi
-
-    if confirm "Configure linux cac?"; then
-        info "Setting up linux cac..."
-        configure_cac
     fi
 
     success "Setup successful!"
@@ -152,13 +105,10 @@ confirm() {
     esac
 }
 
-check_dir () {
-    if [ ! -d "$1" ]; then
-        info "Creating dir $1..."
-        mkdir -p -- "$1"
-    else
-        info "$1 exists"
-    fi
+# Link commands to local bin
+link_command() {
+    command -v "$1" >/dev/null 2>&1 || return 0
+    ln -sf "$(command -v "$1")" "$LOCAL_BIN/$2"
 }
 
 # Detect Linux distribution family
@@ -195,26 +145,7 @@ detect_distro() {
     success "Detected distro: $DISTRO_ID (family: $DISTRO_FAMILY)"
 }
 
-pkg_update() {
-    case "$DISTRO_FAMILY" in
-        debian)   sudo apt update && sudo apt upgrade -y ;;
-        macos)    brew update && brew upgrade ;;
-        arch)     sudo pacman -Syu --noconfirm ;;
-        fedora)   sudo dnf upgrade -y ;;
-        alpine)   sudo apk update && sudo apk upgrade ;;
-    esac
-}
-
-pkg_install() {
-    case "$DISTRO_FAMILY" in
-        debian)   sudo apt-get install -y "$@" ;;
-        macos)    brew install "$@" ;;
-        arch)     sudo pacman -S --noconfirm "$@" ;;
-        fedora)   sudo dnf install -y "$@" ;;
-        alpine)   sudo apk add "$@" ;;
-    esac
-}
-
+# Get dependencies for the current distribution
 deps_for_distro() {
     case "$DISTRO_FAMILY" in
         debian)   echo "$DEBIAN_DEPS" ;;
@@ -225,10 +156,29 @@ deps_for_distro() {
     esac
 }
 
-install_build_deps() {
-    pkg_install $(deps_for_distro)
+# Update via system package manager
+pkg_update() {
+    case "$DISTRO_FAMILY" in
+        debian)   sudo apt update && sudo apt upgrade -y ;;
+        macos)    brew update && brew upgrade ;;
+        arch)     sudo pacman -Syu --noconfirm ;;
+        fedora)   sudo dnf upgrade -y ;;
+        alpine)   sudo apk update && sudo apk upgrade ;;
+    esac
 }
 
+# Install packages via system package manager
+pkg_install() {
+    case "$DISTRO_FAMILY" in
+        debian)   sudo apt-get install -y "$@" ;;
+        macos)    brew install "$@" ;;
+        arch)     sudo pacman -S --noconfirm "$@" ;;
+        fedora)   sudo dnf install -y "$@" ;;
+        alpine)   sudo apk add "$@" ;;
+    esac
+}
+
+# Install fonts
 install_font() {
     local url="$1"
     local name="$2"
@@ -259,15 +209,6 @@ generate_ssh_key() {
     ssh-add ~/.ssh/id_ed25519_$1
 }
 
-configure_cac() {
-    certutil -N -d sql:$HOME/.pki/nssdb --empty-password
-
-    # run jdjaxon/linux_cac script
-    curl -fsSL https://raw.githubusercontent.com/jdjaxon/linux_cac/main/cac_setup.sh | sudo bash
-
-    modutil -dbdir sql:$HOME/.pki/nssdb/ \
-        -add "CAC Module" \
-        -libfile /usr/lib/x86_64-linux-gnu/opensc-pkcs11.so
-}
-
+# Run main script
+# ================================================
 main
