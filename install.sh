@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -e
+set -euo pipefail
 
 # Colors for output
 RED='\033[0;31m'
@@ -88,7 +88,6 @@ main() {
     if [ ! -d "$HOME/.dotfiles" ]; then
         info "Installing dotfiles..."
         git clone --depth 1 https://github.com/knealking/dotfiles.git "$HOME/.dotfiles"
-        stow -d "$HOME/.dotfiles" -t "$HOME"
         success "Dotfiles installed successfully!"
     else
         info "Dotfiles already installed!"
