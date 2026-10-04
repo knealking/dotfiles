@@ -20,24 +20,22 @@ curl -fsSL https://raw.githubusercontent.com/knealking/dotfiles/dev/install.sh |
 chsh -s $(which zsh)
 ```
 
-## Setup
+## Install
 
-Run dependencies setup script:
+Run install script:
 
 ```sh
-./setup
+./install.sh
 ```
 
 ## Plugins
 
 Managed without a third-party plugin manager. Plugins are cloned into `$ZDOTDIR/plugins/` on first launch.
 
-| Plugin                                                                                    | Purpose                         |
-| ----------------------------------------------------------------------------------------- | ------------------------------- |
-| [fast-syntax-highlighting](https://github.com/zdharma-continuum/fast-syntax-highlighting) | Syntax highlighting             |
-| [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)                   | Fish-style inline suggestions   |
-| [zsh-history-substring-search](https://github.com/zsh-users/zsh-history-substring-search) | Up/down arrow history filtering |
-| [zsh-vi-mode](https://github.com/jeffreytse/zsh-vi-mode)                                  | Vi keybindings                  |
+| Plugin                                                                                    | Purpose                       |
+| ----------------------------------------------------------------------------------------- | ----------------------------- |
+| [fast-syntax-highlighting](https://github.com/zdharma-continuum/fast-syntax-highlighting) | Syntax highlighting           |
+| [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)                   | Fish-style inline suggestions |
 
 To update all plugins:
 
@@ -47,20 +45,8 @@ zplugin-update
 
 ## Keybindings
 
-| Key       | Action                                              |
-| --------- | --------------------------------------------------- |
-| `Ctrl+R`  | Fuzzy history search (fzf)                          |
-| `Ctrl+T`  | Fuzzy file search including hidden files (fzf + fd) |
-| `Ctrl+F`  | Fuzzy file search excluding hidden files (fzf + fd) |
-| `Ctrl+→`  | Move forward one word                               |
-| `Ctrl+←`  | Move backward one word                              |
-| `↑` / `↓` | History search by prefix                            |
-| `Ctrl+\`  | Toggle autosuggestions                              |
-
-## Utilities
-
-Run the utilities script:
-
-```bash
-./utils.sh
-```
+| Key      | Action                                              |
+| -------- | --------------------------------------------------- |
+| `Ctrl+R` | Fuzzy history search (fzf)                          |
+| `Ctrl+T` | Fuzzy file search including hidden files (fzf + fd) |
+| `Ctrl+F` | Fuzzy file search excluding hidden files (fzf + fd) |
