@@ -20,13 +20,21 @@ curl -fsSL https://raw.githubusercontent.com/knealking/dotfiles/dev/install.sh |
 chsh -s $(which zsh)
 ```
 
-## Install
+## Linutil
 
-Run install script:
+Install utilities with [linutil](https://github.com/ChrisTitusTech/linutil)
 
-```sh
-./install.sh
+```bash
+curl -fsSL https://christitus.com/linux | sh
 ```
+
+## Keybindings
+
+| Key      | Action                                              |
+| -------- | --------------------------------------------------- |
+| `Ctrl+R` | Fuzzy history search (fzf)                          |
+| `Ctrl+T` | Fuzzy file search including hidden files (fzf + fd) |
+| `Ctrl+F` | Fuzzy file search excluding hidden files (fzf + fd) |
 
 ## Plugins
 
@@ -43,10 +51,13 @@ To update all plugins:
 zplugin-update
 ```
 
-## Keybindings
+### Linux Cac
 
-| Key      | Action                                              |
-| -------- | --------------------------------------------------- |
-| `Ctrl+R` | Fuzzy history search (fzf)                          |
-| `Ctrl+T` | Fuzzy file search including hidden files (fzf + fd) |
-| `Ctrl+F` | Fuzzy file search excluding hidden files (fzf + fd) |
+```bash
+mkdir -p $HOME/.pki/nssdb
+certutil -N -d sql:$HOME/.pki/nssdb --empty-password
+curl -fsSL https://raw.githubusercontent.com/jdjaxon/linux_cac/main/cac_setup.sh | sudo bash
+modutil -dbdir sql:$HOME/.pki/nssdb/ \
+    -add "CAC Module" \
+    -libfile /usr/lib/x86_64-linux-gnu/opensc-pkcs11.so
+```
