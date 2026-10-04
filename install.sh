@@ -16,7 +16,7 @@ FONTS="$HOME/.local/share/fonts"
 
 # Distribution-specific dependencies
 DEBIAN_DEPS="zsh git curl wget tmux build-essential gcc clang stow bat fzf \
-    python3 python3-venv ripgrep fd-find eza lazygit alacritty zoxide"
+    python3 python3-venv ripgrep fd-find eza zoxide"
 
 MACOS_DEPS="xcode-select"
 
