@@ -94,7 +94,7 @@ alias df='df -h'
 alias gcm='git commit -m'
 alias gp='git push'
 alias glog='PAGER="less -F -X" git log'  # -F quit if one screen, -X no clear on exit
-alias dotfiles='git --git-dir=$HOME/dotfiles --work-tree=$HOME'
+alias dotfiles='git -C "$HOME/dotfiles"'
 
 # Modular Config Files
 # =========================================================
