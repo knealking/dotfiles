@@ -15,7 +15,7 @@ STATE="$HOME/.local/state/zsh"
 FONTS="$HOME/.local/share/fonts"
 
 # Distribution-specific dependencies
-DEBIAN_DEPS="zsh git curl wget tmux build-essential gcc clang stow bat fzf \
+DEBIAN_DEPS="zsh git curl wget tmux build-essential gcc clang stow bat \
     python3 python3-venv ripgrep fd-find eza zoxide"
 
 MACOS_DEPS="xcode-select"
@@ -56,6 +56,16 @@ main() {
         success "Neovim installed successfully!"
     else
         info "Neovim already installed!"
+    fi
+
+    # install fzf
+    if [ ! -d $HOME/.fzf ]; then
+        info "Installing fzf..."
+        git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+        ~/.fzf/install --bin
+        success "fzf installed successfully!"
+    else
+        info "fzf already installed!"
     fi
 
     # install uv
