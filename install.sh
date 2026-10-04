@@ -76,14 +76,7 @@ main() {
         info "uv already installed!"
     fi
 
-    if [ ! -f "$(uv tool dir)/pwndbg/share/pwndbg/gdbinit.py" ]; then
-        uv tool install git+https://github.com/pwndbg/pwndbg
-        echo "source $(uv tool dir)/pwndbg/share/pwndbg/gdbinit.py" >> ~/.gdbinit
-        success "pwndbg installed successfully!"
-    else
-        info "pwndgb already installed!"
-    fi
-
+    # Set up SSH keys
     if confirm "Set up SSH keys?"; then
         mkdir -p ~/.ssh
         chmod 700 ~/.ssh
