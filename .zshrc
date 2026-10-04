@@ -7,6 +7,7 @@ export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
 export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
+export PATH="$HOME/.local/bin:$PATH"
 
 # ---------- Pager ----------
 if command -v bat >/dev/null 2>&1; then
@@ -15,29 +16,23 @@ elif command -v batcat >/dev/null 2>&1; then
   export MANPAGER="batcat -l man -p"
 fi
 
-# ---------- PATH ----------
-export PATH="$HOME/.local/bin:$PATH"
-
-HISTFILE="$XDG_STATE_HOME/zsh/history"
+# Shell behavior
+# =========================================================
 HISTSIZE=100000
 SAVEHIST=100000
+HISTFILE="$XDG_STATE_HOME/zsh/history"
 
 ZPLUGINDIR="$HOME/.local/share/zsh/plugins"
 PURE_DIR="$ZPLUGINDIR/pure"
 
+setopt NOBEEP
+setopt AUTOCD
 setopt APPEND_HISTORY
-setopt SHARE_HISTORY
 setopt HIST_IGNORE_DUPS
 setopt HIST_IGNORE_SPACE
-setopt HIST_EXPIRE_DUPS_FIRST
 setopt HIST_FIND_NO_DUPS
-
-# Shell behavior
-# =========================================================
-
-setopt AUTOCD
-setopt NOBEEP
-setopt NUMERIC_GLOB_SORT  # sort file10 after file9, not after file1
+setopt NUMERIC_GLOB_SORT
+setopt HIST_EXPIRE_DUPS_FIRST
 
 # Load completion system
 autoload -Uz compinit
@@ -47,10 +42,6 @@ compinit -d "$XDG_CACHE_HOME/zsh/zcompdump"
 
 # Enable interactive completion menu selection
 zstyle ':completion:*' menu select
-
-# Make completion case-insensitive
-# Example: "doc" can complete to "Documents"
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'  # lowercase input matches upper and lower
 
 # Zsh Prompt
 # =========================================================
@@ -81,14 +72,11 @@ export GPG_TTY="$(tty 2>/dev/null || true)"
 
 # ---------- Aliases ----------
 alias ll='eza -lh --icons --git'
-
-# Better grep, diff, df
 alias grep='rg --color=auto'
 alias diff='diff --color=auto'
 alias df='df -h'
 
-# Git
-alias gcm='git commit -m'
+alias gc='git commit -m'
 alias gp='git push'
 alias glog='PAGER="less -F -X" git log'  # -F quit if one screen, -X no clear on exit
 alias dotfiles='git -C "$HOME/dotfiles"'
@@ -149,7 +137,3 @@ export NVM_DIR="$HOME/.nvm"
 # Cargo
 # =========================================================
 [[ -r "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
-
-# Linux homebrew
-# =========================================================
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
