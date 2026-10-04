@@ -1,3 +1,23 @@
+# Custom .zshrc managed by dotfiles
+
+# Environment variables loaded by zsh before .zshrc.
+
+# ---------- XDG base directories ----------
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
+
+# ---------- Pager ----------
+if command -v bat >/dev/null 2>&1; then
+  export MANPAGER="bat -l man -p"
+elif command -v batcat >/dev/null 2>&1; then
+  export MANPAGER="batcat -l man -p"
+fi
+
+# ---------- PATH ----------
+export PATH="$HOME/.local/bin:$PATH"
+
 HISTFILE="$XDG_STATE_HOME/zsh/history"
 HISTSIZE=100000
 SAVEHIST=100000
@@ -12,14 +32,27 @@ setopt HIST_IGNORE_SPACE
 setopt HIST_EXPIRE_DUPS_FIRST
 setopt HIST_FIND_NO_DUPS
 
-# Shell behaviour
+# Shell behavior
 # =========================================================
 
 setopt AUTOCD
 setopt NOBEEP
 setopt NUMERIC_GLOB_SORT  # sort file10 after file9, not after file1
 
-# Prompt/theme
+# Load completion system
+autoload -Uz compinit
+
+# Initialize completion with cached metadata file
+compinit -d "$XDG_CACHE_HOME/zsh/zcompdump"
+
+# Enable interactive completion menu selection
+zstyle ':completion:*' menu select
+
+# Make completion case-insensitive
+# Example: "doc" can complete to "Documents"
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'  # lowercase input matches upper and lower
+
+# Zsh Prompt
 # =========================================================
 
 # Auto-clone Pure if it hasn't been cloned yet
@@ -40,7 +73,13 @@ zstyle :prompt:pure:path color white  # change the path color
 zstyle :prompt:pure:git:stash show yes  # turn on git stash status
 prompt pure
 
-# Aliases
+# ---------- Editor ----------
+export EDITOR="nvim"
+
+# ---------- GPG ----------
+export GPG_TTY="$(tty 2>/dev/null || true)"
+
+# ---------- Aliases ----------
 alias ll='eza -lh --icons --git'
 
 # Better cat
@@ -56,48 +95,6 @@ alias gcm='git commit -m'
 alias gp='git push'
 alias glog='PAGER="less -F -X" git log'  # -F quit if one screen, -X no clear on exit
 alias dotfiles='git --git-dir=$HOME/dotfiles --work-tree=$HOME'
-
-# Homebrew
-if [[ -x /opt/homebrew/bin/brew ]]; then
-  eval "$(/opt/homebrew/bin/brew shellenv zsh)"
-fi
-
-# Completion
-# =========================================================
-
-# Load completion system
-autoload -Uz compinit
-
-# Initialize completion with cached metadata file
-compinit -d "$XDG_CACHE_HOME/zsh/zcompdump"
-
-# Enable interactive completion menu selection
-zstyle ':completion:*' menu select
-
-# Make completion case-insensitive
-# Example: "doc" can complete to "Documents"
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'  # lowercase input matches upper and lower
-
-# Fuzzy finder
-# =========================================================
-
-# macOS / Homebrew (Apple Silicon)
-if [[ -f /opt/homebrew/opt/fzf/shell/key-bindings.zsh ]]; then
-  source /opt/homebrew/opt/fzf/shell/key-bindings.zsh
-  source /opt/homebrew/opt/fzf/shell/completion.zsh
-fi
-
-# Arch
-if [[ -f /usr/share/fzf/key-bindings.zsh ]]; then
-  source /usr/share/fzf/key-bindings.zsh
-  source /usr/share/fzf/completion.zsh
-fi
-
-# Ubuntu
-if [[ -f /usr/share/doc/fzf/examples/key-bindings.zsh ]]; then
-  source /usr/share/doc/fzf/examples/key-bindings.zsh
-  source /usr/share/doc/fzf/examples/completion.zsh
-fi
 
 # Modular Config Files
 # =========================================================
@@ -123,6 +120,9 @@ zplugin-update() {
 
 _zplugin_load zsh-users zsh-autosuggestions
 _zplugin_load zdharma-continuum fast-syntax-highlighting
+
+# =========================================================
+# Plugins end
 
 # fzf configuration
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --strip-cwd-prefix'  # strip-cwd-prefix removes the leading ./ from results
@@ -164,4 +164,10 @@ export NVM_DIR="$HOME/.nvm"
 # =========================================================
 . "$HOME/.local/share/../bin/env"
 
-# EOF
+# Cargo
+# =========================================================
+[[ -r "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
+
+# Linux homebrew
+# =========================================================
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
