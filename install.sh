@@ -1,10 +1,5 @@
 #!/bin/sh
 
-# if [ -z "${BASH_VERSION:-}" ]; then
-#     printf '%s\n' 'This installer requires Bash. Download it and run: bash install.sh' >&2
-#     exit 1
-# fi
-
 set -e
 
 RED='\033[0;31m'
@@ -21,17 +16,19 @@ FEDORA_DEPS="@development-tools git zsh stow curl eza bat fd-find fzf ripgrep"
 ALPINE_DEPS="build-base git zsh stow curl exa bat fd-find fzf ripgrep"
 
 LOCAL_BIN="$HOME/.local/bin"
+DATA_HOME="$HOME/.local/share"
 ZCACHE="$HOME/.cache/zsh"
-FONTS="$HOME/.local/share/fonts"
 STATE="$HOME/.local/state/zsh"
-NSSDB="$HOME/.pki/nssdb"
-ALACRITTY_THEMES="$HOME/.local/state/alacritty/themes"
+
+FONTS="$HOME/.local/share/fonts"
+ALACRITTY_THEMES="$DATA_HOME/alacritty/themes"
 
 main() {
     # Detect distro before doing anything
     detect_distro
 
     check_dir "$LOCAL_BIN"
+    check_dir "$DATA_HOME"
     check_dir "$ZCACHE"
     check_dir "$STATE"
     check_dir "$NSSDB"
@@ -47,12 +44,13 @@ main() {
     success "Dependencies installation successful"
 
     info "Linking utilities..."
-    # ln -sf "$(which batcat)" "$HOME/.local/bin/bat"
-    # ln -sf "$(which fdfind)" "$HOME/.local/bin/fd"
+    if command -v batcat >/dev/null 2>&1; then
+        ln -sf "$(which batcat)" "$HOME/.local/bin/bat"
+    fi
 
-    info "Configuring zsh..."
-    configure_zsh
-    success "Zsh configuration successful"
+    if command -v fdfind >/dev/null 2>&1; then
+        ln -sf "$(which fdfind)" "$HOME/.local/bin/fd"
+    fi
 
     # Install alacritty themes
     info "Checking alacritty themes..."
@@ -64,7 +62,7 @@ main() {
         info "Alacritty themes already exist!"
     fi
 
-
+    # Install fonts
     install_font "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip" "JetBrainsMono"
     install_font "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Meslo.zip" "Meslo"
 
@@ -90,18 +88,6 @@ main() {
         info "VScode already installed!"
     fi
 
-    if confirm "Configure linux cac?"; then
-        info "Setting up linux cac..."
-        configure_cac
-    fi
-
-    if confirm "Set up SSH keys?"; then
-        mkdir -p ~/.ssh
-        chmod 700 ~/.ssh
-        generate_ssh_key "github"
-        generate_ssh_key "gitlab"
-    fi
-
     # install uv
     if [ ! -f "$HOME/.local/bin/uv" ]; then
         curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -118,19 +104,6 @@ main() {
         info "pwndgb already installed!"
     fi
 
-    # install rustup
-    if [ ! -f "$HOME/.cargo/bin/rustup" ]; then
-        info "Installing Rust..."
-        sleep 2
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-        source ~/.bashrc
-        rustup update
-
-        success "rustup installed successfully!"
-    else
-        info "rustup already installed!"
-    fi
-
     # install yazi
     if [ ! -f "/usr/local/bin/yazi" ]; then
         info "Installing Yazi..."
@@ -143,11 +116,16 @@ main() {
         info "yazi already installed!"
     fi
 
-    if confirm "Link dotfiles to home directory?"; then
-        info "Linking dotfiles..."
-        git clone --depth=1 https://github.com/knealking/dotfiles.git ~/dotfiles
-        cd dotfiles && ./dotmate.py
-        success "Linking dotfiles successful"
+    if confirm "Set up SSH keys?"; then
+        mkdir -p ~/.ssh
+        chmod 700 ~/.ssh
+        generate_ssh_key "github"
+        generate_ssh_key "gitlab"
+    fi
+
+    if confirm "Configure linux cac?"; then
+        info "Setting up linux cac..."
+        configure_cac
     fi
 
     success "Setup successful!"
@@ -220,10 +198,10 @@ detect_distro() {
 pkg_update() {
     case "$DISTRO_FAMILY" in
         debian)   sudo apt update && sudo apt upgrade -y ;;
+        macos)    brew update && brew upgrade ;;
         arch)     sudo pacman -Syu --noconfirm ;;
         fedora)   sudo dnf upgrade -y ;;
         alpine)   sudo apk update && sudo apk upgrade ;;
-        macos)    brew update && brew upgrade ;;
     esac
 }
 
@@ -249,29 +227,6 @@ deps_for_distro() {
 
 install_build_deps() {
     pkg_install $(deps_for_distro)
-}
-
-configure_zsh() {
-    if [ -z "${XDG_CONFIG_HOME:-}" ]; then
-        echo 'export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"' | sudo tee -a /etc/zsh/zshenv >/dev/null
-        export XDG_CONFIG_HOME="$HOME/.config"
-
-        success "XGD_CONFIG_HOME set successfully!"
-    else
-        info "XGD_CONFIG_HOME already set!"
-    fi
-
-    if [ -z "${ZDOTDIR:-}" ]; then
-        echo 'export ZDOTDIR="${XDG_CONFIG_HOME:-$HOME/.config}/zsh"' | sudo tee -a /etc/zsh/zshenv >/dev/null
-        export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
-
-        success "ZDOTDIR set successfully!"
-    else
-        info "ZDOTDIR already set!"
-    fi
-
-    info "Default shell to zsh..."
-    chsh -s "$(which zsh)"
 }
 
 install_font() {
