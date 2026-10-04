@@ -91,6 +91,16 @@ main() {
         generate_ssh_key "gitlab"
     fi
 
+    # install dotfiles
+    if [ ! -d "$HOME/.dotfiles" ]; then
+        info "Installing dotfiles..."
+        git clone --depth 1 https://github.com/yourusername/dotfiles.git "$HOME/.dotfiles"
+        stow -d "$HOME/.dotfiles" -t "$HOME"
+        success "Dotfiles installed successfully!"
+    else
+        info "Dotfiles already installed!"
+    fi
+
     success "Setup successful!"
 }
 
