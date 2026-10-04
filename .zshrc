@@ -110,6 +110,10 @@ _zplugin_load zdharma-continuum fast-syntax-highlighting
 # Plugins end
 
 # fzf configuration
+if [[ ":$PATH:" != *":$HOME/.fzf/bin:"* ]]; then
+    PATH="$PATH:$HOME/.fzf/bin"
+fi
+
 source <(fzf --zsh)  # fzf shell integration
 
 export FZF_DEFAULT_OPTS='
