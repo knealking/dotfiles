@@ -5,13 +5,13 @@
 stable:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/knealking/dotfiles/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/knealking/dotfiles/main/install.sh | bash
 ```
 
 dev:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/knealking/dotfiles/dev/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/knealking/dotfiles/dev/install.sh | bash
 ```
 
 ## Set zsh as your default shell
@@ -38,26 +38,15 @@ curl -fsSL https://christitus.com/linux | sh
 
 ## Plugins
 
-Managed without a third-party plugin manager. Plugins are cloned into `$ZDOTDIR/plugins/` on first launch.
+Managed without a third-party plugin manager. Plugins are cloned into `.local/share/zsh/plugins/` on first launch.
 
-| Plugin                                                                                    | Purpose                       |
-| ----------------------------------------------------------------------------------------- | ----------------------------- |
-| [fast-syntax-highlighting](https://github.com/zdharma-continuum/fast-syntax-highlighting) | Syntax highlighting           |
-| [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)                   | Fish-style inline suggestions |
+- [pure prompt](https://github.com/sindresorhus/pure.git)
+- [fast-syntax-highlighting](https://github.com/zdharma-continuum/fast-syntax-highlighting)
+- [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)
+- [fzf](https://github.com/junegunn/fzf.git)
 
 To update all plugins:
 
 ```sh
 zplugin-update
-```
-
-### Linux Cac
-
-```bash
-mkdir -p $HOME/.pki/nssdb
-certutil -N -d sql:$HOME/.pki/nssdb --empty-password
-curl -fsSL https://raw.githubusercontent.com/jdjaxon/linux_cac/main/cac_setup.sh | sudo bash
-modutil -dbdir sql:$HOME/.pki/nssdb/ \
-    -add "CAC Module" \
-    -libfile /usr/lib/x86_64-linux-gnu/opensc-pkcs11.so
 ```
