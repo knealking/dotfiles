@@ -87,7 +87,7 @@ main() {
     # install dotfiles
     if [ ! -d "$HOME/.dotfiles" ]; then
         info "Installing dotfiles..."
-        git clone --depth 1 https://github.com/knealking/dotfiles.git "$HOME/.dotfiles"
+        git clone https://github.com/knealking/dotfiles.git "$HOME/.dotfiles"
         success "Dotfiles installed successfully!"
     else
         info "Dotfiles already installed!"
