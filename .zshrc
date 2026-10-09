@@ -81,6 +81,11 @@ alias gp='git push'
 alias glog='PAGER="less -F -X" git log'  # -F quit if one screen, -X no clear on exit
 alias dotfiles='git -C "$HOME/dotfiles"'
 
+# Only run ssh-agent automatically if on Linux and it isn't running yet
+if [ "$(uname)" = "Linux" ] && [ -z "$SSH_AUTH_SOCK" ]; then
+    eval "$(ssh-agent -s)" > /dev/null
+fi
+
 # Modular Config Files
 # =========================================================
 
