@@ -26,7 +26,7 @@ ALPINE_DEPS="build-base git zsh stow curl exa bat fd-find fzf ripgrep"
 
 main() {
     # Detect distro before doing anything
-    detect_distro
+    get_os
 
     # Update system
     info "Updating system packages..."
@@ -123,43 +123,59 @@ link_command() {
     ln -sf "$(command -v "$1")" "$LOCAL_BIN/$2"
 }
 
-# Detect Linux distribution family
-detect_distro() {
-    if [ ! -f /etc/os-release ]; then
-        error "Error: /etc/os-release not found. Cannot detect distro."
-        exit 1
+get_distro() {
+    DISTRO=""
+
+    if [ -r /etc/os-release ]; then
+        . /etc/os-release
+        DISTRO_ID="$ID"
+        case "$DISTRO_ID" in
+            ubuntu|debian|linuxmint|pop|elementary|zorin|kali|raspbian)
+                DISTRO="debian" ;;
+            arch|cachyos|manjaro|endeavouros|garuda|artix)
+                DISTRO="arch" ;;
+            fedora)
+                DISTRO="fedora" ;;
+            centos|rhel|rocky|almalinux|ol)
+                DISTRO="rhel" ;;
+            opensuse*|sles|sled)
+                DISTRO="opensuse" ;;
+            alpine)
+                DISTRO="alpine" ;;
+            *)
+                error "Error: Unsupported distro: $DISTRO_ID"
+                exit 1
+                ;;
+        esac
+        ;;
+    else
+        echo "unknown-linux"
     fi
 
-    . /etc/os-release
-    DISTRO_ID="${ID:-unknown}"
+    echo "$DISTRO"
+}
 
-    case "$DISTRO_ID" in
-        ubuntu|debian|linuxmint|pop|elementary|zorin|kali|raspbian)
-            DISTRO_FAMILY="debian" ;;
-        darwin)
-            DISTRO_FAMILY="macos" ;;
-        arch|cachyos|manjaro|endeavouros|garuda|artix)
-            DISTRO_FAMILY="arch" ;;
-        fedora)
-            DISTRO_FAMILY="fedora" ;;
-        centos|rhel|rocky|almalinux|ol)
-            DISTRO_FAMILY="rhel" ;;
-        opensuse*|sles|sled)
-            DISTRO_FAMILY="opensuse" ;;
-        alpine)
-            DISTRO_FAMILY="alpine" ;;
+# Detect Linux distribution family
+get_os() {
+    OS="$(uname -s)"
+    case "$OS" in
+        Darwin)
+            echo "macos"
+            ;;
+        Linux)
+            OS="$(get_distro)"
+            ;;
         *)
-            error "Error: Unsupported distro: $DISTRO_ID"
-            exit 1
+            echo "unknown"
             ;;
     esac
 
-    success "Detected distro: $DISTRO_ID (family: $DISTRO_FAMILY)"
+    success "Detected: $OS"
 }
 
 # Get dependencies for the current distribution
 deps_for_distro() {
-    case "$DISTRO_FAMILY" in
+    case "$DISTRO" in
         debian)   echo "$DEBIAN_DEPS" ;;
         macos)    echo "$MACOS_DEPS" ;;
         arch)     echo "$ARCH_DEPS" ;;
@@ -170,7 +186,7 @@ deps_for_distro() {
 
 # Update via system package manager
 pkg_update() {
-    case "$DISTRO_FAMILY" in
+    case "$DISTRO" in
         debian)   sudo apt update && sudo apt upgrade -y ;;
         macos)    brew update && brew upgrade ;;
         arch)     sudo pacman -Syu --noconfirm ;;
@@ -181,7 +197,7 @@ pkg_update() {
 
 # Install packages via system package manager
 pkg_install() {
-    case "$DISTRO_FAMILY" in
+    case "$DISTRO" in
         debian)   sudo apt-get install -y "$@" ;;
         macos)    brew install "$@" ;;
         arch)     sudo pacman -S --noconfirm "$@" ;;
