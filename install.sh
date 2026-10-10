@@ -123,6 +123,7 @@ link_command() {
     ln -sf "$(command -v "$1")" "$LOCAL_BIN/$2"
 }
 
+# Get linux distro
 get_distro() {
     DISTRO=""
 
