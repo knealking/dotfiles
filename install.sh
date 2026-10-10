@@ -5,7 +5,7 @@ set -euo pipefail
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
 # Local paths for installation and configuration
 LOCAL_BIN="$HOME/.local/bin"
