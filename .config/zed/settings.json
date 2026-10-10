@@ -8,8 +8,8 @@
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
     "base_keymap": "Zed",
-    "ui_font_size": 16.0,
-    "buffer_font_size": 15,
+    "ui_font_size": 14,
+    "buffer_font_size": 14,
     "theme": "Ayu Mirage",
     "icon_theme": "Material Icon Theme",
     "telemetry": {
