@@ -10,8 +10,16 @@
     "base_keymap": "Zed",
     "ui_font_size": 14,
     "buffer_font_size": 14,
-    "theme": "Ayu Mirage",
-    "icon_theme": "Material Icon Theme",
+    "theme": {
+        "mode": "system",
+        "light": "One Light",
+        "dark": "One Dark"
+    },
+    "icon_theme": {
+        "mode": "light",
+        "light": "Material Icon Theme",
+        "dark": "Material Icon Theme"
+    },
     "telemetry": {
         "diagnostics": false,
         "metrics": false,

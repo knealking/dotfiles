@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 set -euo pipefail
 
@@ -14,15 +14,24 @@ ZCACHE="$HOME/.cache/zsh"
 STATE="$HOME/.local/state/zsh"
 FONTS="$HOME/.local/share/fonts"
 
+# Use the repo this script lives in when run as ./install.sh,
+# otherwise (curl | bash) clone into ~/.dotfiles
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-}")" 2>/dev/null && pwd)" || SCRIPT_DIR=""
+if [ -n "${BASH_SOURCE[0]:-}" ] && [ -d "$SCRIPT_DIR/.git" ]; then
+    DOTFILES_DIR="$SCRIPT_DIR"
+else
+    DOTFILES_DIR="$HOME/.dotfiles"
+fi
+
 # Distribution-specific dependencies
-DEBIAN_DEPS="zsh git curl wget tmux build-essential gcc clang stow bat \
+DEBIAN_DEPS="zsh git curl wget unzip fontconfig tmux build-essential gcc clang stow bat \
     python3 python3-venv ripgrep fd-find eza zoxide"
 
-MACOS_DEPS="xcode-select"
+MACOS_DEPS=""
 
-ARCH_DEPS="base-devel git zsh stow curl eza bat fd fzf ripgrep"
-FEDORA_DEPS="@development-tools git zsh stow curl eza bat fd-find fzf ripgrep"
-ALPINE_DEPS="build-base git zsh stow curl exa bat fd-find fzf ripgrep"
+ARCH_DEPS="base-devel git zsh stow curl unzip fontconfig eza bat fd fzf ripgrep"
+FEDORA_DEPS="@development-tools git zsh stow curl unzip fontconfig eza bat fd-find fzf ripgrep"
+ALPINE_DEPS="build-base git zsh stow curl unzip fontconfig eza bat fd fzf ripgrep"
 
 main() {
     # Detect distro before doing anything
@@ -35,7 +44,8 @@ main() {
 
     # Install defined packages
     info "Installing dependencies..."
-    pkg_install $(deps_for_distro)
+    read -ra deps <<< "$(deps_for_distro)"
+    pkg_install "${deps[@]}"
     success "Dependencies installation successful"
 
     info "Linking utilities..."
@@ -59,7 +69,7 @@ main() {
     fi
 
     # install fzf
-    if [ ! -d $HOME/.fzf ]; then
+    if [ ! -d "$HOME/.fzf" ]; then
         info "Installing fzf..."
         git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
         ~/.fzf/install --bin
@@ -85,15 +95,19 @@ main() {
     fi
 
     # install dotfiles
-    if [ ! -d "$HOME/.dotfiles" ]; then
+    if [ ! -d "$DOTFILES_DIR" ]; then
         info "Installing dotfiles..."
-        git clone https://github.com/knealking/dotfiles.git "$HOME/.dotfiles"
+        git clone https://github.com/knealking/dotfiles.git "$DOTFILES_DIR"
         success "Dotfiles installed successfully!"
     else
-        info "Dotfiles already installed!"
+        info "Dotfiles already installed at $DOTFILES_DIR"
     fi
 
+    link_dotfiles
+    set_default_shell
+
     success "Setup successful!"
+    reload_shell
 }
 
 error() {
@@ -109,8 +123,11 @@ info() {
 }
 
 confirm() {
+    local answer=""
     printf "%s [Y/n] " "$1"
-    read -r answer
+
+    # Read from the terminal, not stdin: under `curl | bash` stdin is the script
+    read -r answer < /dev/tty || true
     case "$answer" in
         [nN]|[nN][oO]) return 1 ;;
         *) return 0 ;;
@@ -123,55 +140,51 @@ link_command() {
     ln -sf "$(command -v "$1")" "$LOCAL_BIN/$2"
 }
 
-# Get linux distro
+# Get linux distro (sets DISTRO)
 get_distro() {
-    DISTRO=""
-
-    if [ -r /etc/os-release ]; then
-        . /etc/os-release
-        DISTRO_ID="$ID"
-        case "$DISTRO_ID" in
-            ubuntu|debian|linuxmint|pop|elementary|zorin|kali|raspbian)
-                DISTRO="debian" ;;
-            arch|cachyos|manjaro|endeavouros|garuda|artix)
-                DISTRO="arch" ;;
-            fedora)
-                DISTRO="fedora" ;;
-            centos|rhel|rocky|almalinux|ol)
-                DISTRO="rhel" ;;
-            opensuse*|sles|sled)
-                DISTRO="opensuse" ;;
-            alpine)
-                DISTRO="alpine" ;;
-            *)
-                error "Error: Unsupported distro: $DISTRO_ID"
-                exit 1
-                ;;
-        esac
-        ;;
-    else
-        echo "unknown-linux"
+    if [ ! -r /etc/os-release ]; then
+        error "Error: Cannot detect distro, /etc/os-release not found"
+        exit 1
     fi
 
-    echo "$DISTRO"
+    # shellcheck source=/dev/null
+    DISTRO_ID="$(. /etc/os-release && echo "$ID")"
+    case "$DISTRO_ID" in
+        ubuntu|debian|linuxmint|pop|elementary|zorin|kali|raspbian)
+            DISTRO="debian" ;;
+        arch|cachyos|manjaro|endeavouros|garuda|artix)
+            DISTRO="arch" ;;
+        fedora)
+            DISTRO="fedora" ;;
+        centos|rhel|rocky|almalinux|ol)
+            DISTRO="rhel" ;;
+        opensuse*|sles|sled)
+            DISTRO="opensuse" ;;
+        alpine)
+            DISTRO="alpine" ;;
+        *)
+            error "Error: Unsupported distro: $DISTRO_ID"
+            exit 1
+            ;;
+    esac
 }
 
-# Detect Linux distribution family
+# Detect OS / Linux distribution family (sets DISTRO)
 get_os() {
-    OS="$(uname -s)"
-    case "$OS" in
+    case "$(uname -s)" in
         Darwin)
-            echo "macos"
+            DISTRO="macos"
             ;;
         Linux)
-            OS="$(get_distro)"
+            get_distro
             ;;
         *)
-            echo "unknown"
+            error "Error: Unsupported OS: $(uname -s)"
+            exit 1
             ;;
     esac
 
-    success "Detected: $OS"
+    success "Detected: $DISTRO"
 }
 
 # Get dependencies for the current distribution
@@ -193,6 +206,10 @@ pkg_update() {
         arch)     sudo pacman -Syu --noconfirm ;;
         fedora)   sudo dnf upgrade -y ;;
         alpine)   sudo apk update && sudo apk upgrade ;;
+        *)
+            error "Error: No package manager support for: $DISTRO"
+            exit 1
+            ;;
     esac
 }
 
@@ -228,14 +245,74 @@ install_font() {
 
 # Setup SSH keys
 generate_ssh_key() {
-    ssh-keygen -t ed25519 -C "$1" -f ~/.ssh/id_ed25519_$1 -N ""
+    local key="$HOME/.ssh/id_ed25519_$1"
+
+    if [ -f "$key" ]; then
+        info "SSH key for $1 already exists, skipping"
+        return 0
+    fi
+
+    ssh-keygen -t ed25519 -C "$1" -f "$key" -N ""
     success "--- $1 public key start ---"
-    cat ~/.ssh/id_ed25519_$1.pub
+    cat "$key.pub"
     success "--- $1 public key end ---"
 
     eval "$(ssh-agent -s)"
     sleep 1
-    ssh-add ~/.ssh/id_ed25519_$1
+    ssh-add "$key"
+}
+
+# Symlink dotfiles into $HOME
+link_dotfiles() {
+    info "Linking dotfiles..."
+
+    if [ -n "$(git -C "$DOTFILES_DIR" status --porcelain)" ]; then
+        # --adopt would overwrite uncommitted changes in the repo
+        error "Uncommitted changes in $DOTFILES_DIR, linking without --adopt"
+        stow -d "$DOTFILES_DIR" -t "$HOME" .
+    else
+        # --adopt moves existing files (e.g. the distro's default .bashrc) into
+        # the repo so they can be replaced by symlinks. Stash them afterwards so
+        # the repo's versions win, while keeping the originals recoverable
+        # with `git stash show -p`.
+        stow -d "$DOTFILES_DIR" -t "$HOME" --adopt .
+        if [ -n "$(git -C "$DOTFILES_DIR" status --porcelain)" ]; then
+            git -C "$DOTFILES_DIR" stash push -m "Files adopted by install.sh"
+            info "Pre-existing files saved in: git -C $DOTFILES_DIR stash list"
+        fi
+    fi
+
+    success "Dotfiles linked successfully!"
+}
+
+# Make zsh the login shell
+set_default_shell() {
+    local zsh_path
+    zsh_path="$(command -v zsh)"
+
+    if [ "$(basename "${SHELL:-}")" = "zsh" ]; then
+        info "zsh is already the default shell"
+        return 0
+    fi
+
+    info "Setting zsh as the default shell..."
+    sudo chsh -s "$zsh_path" "$USER"
+    success "Default shell set to $zsh_path"
+}
+
+# Replace this script's process with a fresh zsh login shell. A script runs
+# in a child process and can't modify the shell that launched it, so this is
+# the closest thing to "reloading" it.
+reload_shell() {
+    # No terminal (CI, ssh without -t): just tell the user what to do
+    if [ ! -t 1 ] || ! : < /dev/tty 2>/dev/null; then
+        info "Log out and back in, or run: exec zsh -l"
+        return 0
+    fi
+
+    info "Starting a fresh zsh shell..."
+    # Under `curl | bash` stdin is the script pipe, attach zsh to the terminal
+    exec zsh -l < /dev/tty
 }
 
 # Run main script
