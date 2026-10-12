@@ -264,25 +264,51 @@ generate_ssh_key() {
 
 # Symlink dotfiles into $HOME
 link_dotfiles() {
+    local stow_cmd="stow -d $DOTFILES_DIR -t $HOME ."
+    local conflicts
+
     info "Linking dotfiles..."
 
-    if [ -n "$(git -C "$DOTFILES_DIR" status --porcelain)" ]; then
-        # --adopt would overwrite uncommitted changes in the repo
-        error "Uncommitted changes in $DOTFILES_DIR, linking without --adopt"
-        stow -d "$DOTFILES_DIR" -t "$HOME" .
-    else
-        # --adopt moves existing files (e.g. the distro's default .bashrc) into
-        # the repo so they can be replaced by symlinks. Stash them afterwards so
-        # the repo's versions win, while keeping the originals recoverable
-        # with `git stash show -p`.
-        stow -d "$DOTFILES_DIR" -t "$HOME" --adopt .
-        if [ -n "$(git -C "$DOTFILES_DIR" status --porcelain)" ]; then
-            git -C "$DOTFILES_DIR" stash push -m "Files adopted by install.sh"
-            info "Pre-existing files saved in: git -C $DOTFILES_DIR stash list"
-        fi
+    # Dry run first, back up any files that are in the way
+    if ! conflicts="$(stow -n -d "$DOTFILES_DIR" -t "$HOME" . 2>&1)"; then
+        backup_conflicts "$conflicts"
     fi
 
+    # Anything still conflicting (e.g. files owned by another stow package)
+    # has to be resolved manually
+    if ! conflicts="$(stow -n -d "$DOTFILES_DIR" -t "$HOME" . 2>&1)"; then
+        error "Existing files conflict with dotfiles:"
+        printf "%s\n" "$conflicts"
+        info "Move or delete the files above, then run:"
+        info "    $stow_cmd && exec zsh -l"
+        # Exit instead of reloading the shell, which would hide this output
+        exit 1
+    fi
+
+    stow -d "$DOTFILES_DIR" -t "$HOME" .
     success "Dotfiles linked successfully!"
+}
+
+# Move files reported by a stow dry run into a timestamped backup directory
+backup_conflicts() {
+    local backup_dir
+    local target
+
+    backup_dir="$HOME/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)"
+
+    # Conflict paths are relative to $HOME, e.g.
+    #   * cannot stow ../repo/.bashrc over existing target .bashrc since ...
+    #   * existing target is not owned by stow: .zshrc
+    printf "%s\n" "$1" | sed -n \
+        -e 's/^.*over existing target \(.*\) since .*$/\1/p' \
+        -e 's/^.*existing target is not owned by stow: \(.*\)$/\1/p' \
+        -e 's/^.*existing target is neither a link nor a directory: \(.*\)$/\1/p' |
+    while IFS= read -r target; do
+        [ -e "$HOME/$target" ] || [ -L "$HOME/$target" ] || continue
+        mkdir -p "$backup_dir/$(dirname "$target")"
+        mv "$HOME/$target" "$backup_dir/$target"
+        info "Backed up ~/$target to $backup_dir/$target"
+    done
 }
 
 # Make zsh the login shell
