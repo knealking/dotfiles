@@ -13,6 +13,18 @@
 
 [core]
 	whiteSpace = error
+	editor = code --wait
+
+[pull]
+	rebase = true
+
+[push]
+	autoSetupRemote = true
+
+[alias]
+	st = status -s
+	conf = config --global --edit
+	lg = log --oneline --graph --decorate
 
 [init]
 	defaultBranch = main

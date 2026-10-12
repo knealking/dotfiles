@@ -32,8 +32,8 @@ obj/
 .idea/
 
 .copilot/ide
-lazy-lock.json
 .config/zsh/plugins
+.config/nvim/lazy-lock.json
 
 # Artifacts
 .zcompdump

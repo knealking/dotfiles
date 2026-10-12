@@ -8,9 +8,8 @@
 .config/zsh/plugins/
 .mypy_cache
 __pycache__
-setup.sh
-utils.sh
+docs/
 dotmate.py
 README.md
 apps.txt
-installer.sh
+install.sh
