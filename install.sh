@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+BRANCH=dev
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -97,7 +99,7 @@ main() {
     # install dotfiles
     if [ ! -d "$DOTFILES_DIR" ]; then
         info "Installing dotfiles..."
-        git clone https://github.com/knealking/dotfiles.git "$DOTFILES_DIR"
+        git clone -b "$BRANCH" https://github.com/knealking/dotfiles.git "$DOTFILES_DIR"
         success "Dotfiles installed successfully!"
     else
         info "Dotfiles already installed at $DOTFILES_DIR"
