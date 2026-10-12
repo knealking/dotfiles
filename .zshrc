@@ -147,8 +147,7 @@ export NVM_DIR="$HOME/.nvm"
 # =========================================================
 [[ -r "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
 
-# Linux homebrew
-# =========================================================
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
-
 export XDG_DATA_DIRS="/var/lib/flatpak/exports/share:$HOME/.local/share/flatpak/exports/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
+
+# Run fastfetch on shell initialization
+fastfetch
