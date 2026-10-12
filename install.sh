@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-BRANCH=main
+BRANCH=dev
 
 # Colors for output
 RED='\033[0;31m'
