@@ -29,7 +29,7 @@ fi
 DEBIAN_DEPS="zsh git curl wget unzip fontconfig tmux build-essential gcc clang stow bat \
     python3 python3-venv ripgrep fd-find eza zoxide"
 
-MACOS_DEPS=""
+MACOS_DEPS="bat fzf yazi eza stow font-meslo-lg-nerd-font font-jetbrains-mono-nerd-font"
 
 ARCH_DEPS="base-devel git zsh stow curl unzip fontconfig eza bat fd fzf ripgrep"
 FEDORA_DEPS="@development-tools git zsh stow curl unzip fontconfig eza bat fd-find fzf ripgrep"
